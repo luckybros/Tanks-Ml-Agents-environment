@@ -215,6 +215,8 @@ MonoBehaviour:
   - {fileID: -7007994009089914771, guid: cff2689e97d3f4c3185a191c1c87d855, type: 3}
   - {fileID: 8031219539231834483, guid: 7b27cdcf390064a18bf982aa659b0f37, type: 3}
   m_RespawnCooldown: 20
+  m_HasActivePowerUp: 0
+  m_PowerUpType: 0
 --- !u!1001 &99816032
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4374,10 +4376,15 @@ PrefabInstance:
       propertyPath: m_BehaviorType
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7768019873592815796, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     - {fileID: 1521431059820009530, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     - {fileID: 1521431059820018870, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
+    - {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4412,6 +4419,8 @@ MonoBehaviour:
   - {fileID: -7007994009089914771, guid: cff2689e97d3f4c3185a191c1c87d855, type: 3}
   - {fileID: 8031219539231834483, guid: 7b27cdcf390064a18bf982aa659b0f37, type: 3}
   m_RespawnCooldown: 20
+  m_HasActivePowerUp: 0
+  m_PowerUpType: 0
 --- !u!1 &1058269699
 GameObject:
   m_ObjectHideFlags: 0
@@ -4910,6 +4919,8 @@ MonoBehaviour:
   - {fileID: -7007994009089914771, guid: cff2689e97d3f4c3185a191c1c87d855, type: 3}
   - {fileID: 8031219539231834483, guid: 7b27cdcf390064a18bf982aa659b0f37, type: 3}
   m_RespawnCooldown: 20
+  m_HasActivePowerUp: 0
+  m_PowerUpType: 0
 --- !u!1 &1282556331
 GameObject:
   m_ObjectHideFlags: 0
@@ -5275,7 +5286,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1382759557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5289,8 +5300,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tanks.Complete.CoverageManager
   cellSize: 3
-  character: {fileID: 537670471}
-  powerUps: []
+  tank1: {fileID: 537670471}
+  tank2: {fileID: 1720433416}
+  powerUpSpawner1: {fileID: 1280822802}
+  powerUpSpawner2: {fileID: 1889927103}
+  powerUpSpawner3: {fileID: 1530750148}
+  powerUpSpawner4: {fileID: 1444061139}
 --- !u!4 &1382759558
 Transform:
   m_ObjectHideFlags: 0
@@ -5923,6 +5938,8 @@ MonoBehaviour:
   - {fileID: -7007994009089914771, guid: cff2689e97d3f4c3185a191c1c87d855, type: 3}
   - {fileID: 8031219539231834483, guid: 7b27cdcf390064a18bf982aa659b0f37, type: 3}
   m_RespawnCooldown: 20
+  m_HasActivePowerUp: 0
+  m_PowerUpType: 0
 --- !u!1001 &1530750146
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6037,6 +6054,8 @@ MonoBehaviour:
   - {fileID: -7007994009089914771, guid: cff2689e97d3f4c3185a191c1c87d855, type: 3}
   - {fileID: 8031219539231834483, guid: 7b27cdcf390064a18bf982aa659b0f37, type: 3}
   m_RespawnCooldown: 20
+  m_HasActivePowerUp: 0
+  m_PowerUpType: 0
 --- !u!4 &1534061084 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5452403333091727821, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
@@ -6294,12 +6313,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 8
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7768019873592815796, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     - {fileID: 1521431059820018870, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     - {fileID: 1521431059820009530, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
+    - {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -6385,6 +6405,8 @@ MonoBehaviour:
   - {fileID: -7007994009089914771, guid: cff2689e97d3f4c3185a191c1c87d855, type: 3}
   - {fileID: 8031219539231834483, guid: 7b27cdcf390064a18bf982aa659b0f37, type: 3}
   m_RespawnCooldown: 20
+  m_HasActivePowerUp: 0
+  m_PowerUpType: 0
 --- !u!1 &1670759059 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5508431565963862471, guid: 5b268cad32d016747980e87b864177bf, type: 3}
@@ -6509,6 +6531,8 @@ MonoBehaviour:
   - {fileID: -7007994009089914771, guid: cff2689e97d3f4c3185a191c1c87d855, type: 3}
   - {fileID: 8031219539231834483, guid: 7b27cdcf390064a18bf982aa659b0f37, type: 3}
   m_RespawnCooldown: 20
+  m_HasActivePowerUp: 0
+  m_PowerUpType: 0
 --- !u!1 &1720433416 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1521431059817682492, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
@@ -6789,6 +6813,8 @@ MonoBehaviour:
   - {fileID: -7007994009089914771, guid: cff2689e97d3f4c3185a191c1c87d855, type: 3}
   - {fileID: 8031219539231834483, guid: 7b27cdcf390064a18bf982aa659b0f37, type: 3}
   m_RespawnCooldown: 20
+  m_HasActivePowerUp: 0
+  m_PowerUpType: 0
 --- !u!4 &1940864263 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5452403333091727821, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}

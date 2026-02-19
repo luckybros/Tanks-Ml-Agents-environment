@@ -21,7 +21,7 @@ namespace Tanks.Complete
         private float m_ShieldValue;                        // Percentage of reduced damage when the tank has a shield.
         private bool m_IsInvincible;                        // Is the tank invincible in this moment?
 
-        public event Action DeathNotification;
+        public event Action<TankAgent> DeathNotification;
         public event Action<TankAgent> DamageNotification;
 
         private void Awake ()
@@ -65,7 +65,7 @@ namespace Tanks.Complete
                 // If the current health is at or below zero and it has not yet been registered, call OnDeath.
                 if (m_CurrentHealth <= 0f && !m_Dead)
                 {
-                    OnDeath ();
+                    OnDeath (attacker);
                 }
                 else // added for agent
                 {
@@ -126,7 +126,7 @@ namespace Tanks.Complete
         }
 
 
-        private void OnDeath ()
+        private void OnDeath (TankAgent attacker)
         {
             // Set the flag so that this function is only called once.
             m_Dead = true;
@@ -141,7 +141,7 @@ namespace Tanks.Complete
             // Play the tank explosion sound effect.
             m_ExplosionAudio.Play();
 
-            DeathNotification?.Invoke();
+            DeathNotification?.Invoke(attacker);
             // Turn the tank off.
             // gameObject.SetActive (false);
         }

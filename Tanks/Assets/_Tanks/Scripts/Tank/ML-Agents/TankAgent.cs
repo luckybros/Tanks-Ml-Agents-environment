@@ -193,11 +193,19 @@ namespace Tanks.Complete
             }
         }
 
-        private void OnDeath()
+        private void OnDeath(TankAgent attacker)
         {
             Debug.Log($"On Death:");
             AddReward(-1f);
-            otherAgent.AddReward(1f);
+            if (attacker != this)
+            {
+                Debug.Log("Killed other agent!");
+                otherAgent.AddReward(1f);
+            }
+            else 
+            {
+                Debug.Log("Ucciso da solo");
+            }
             EndEpisode();
             otherAgent.EndEpisode();
         }
