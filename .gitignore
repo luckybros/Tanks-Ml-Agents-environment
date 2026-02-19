@@ -1,0 +1,60 @@
+# --- UNITY CORE (Ignora queste cartelle ovunque, anche dentro "Tanks") ---
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+MemoryCaptures/
+
+# --- FILE DI SISTEMA / IDE ---
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.openser
+*.swe
+.DS_Store
+Thumbs.db
+
+# --- ML-AGENTS & PYTHON ---
+# Jupyter & Python caches
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+*.egg-info/
+*.eggs/
+dist/
+build/
+
+# ML-Agents Timers & Logs specifici
+/Assets/ML-Agents/Timers*
+csharp_timers.json
+*Project.log
+sysinfo.txt
+
+# --- FILE BINARI BUILD (Da non caricare) ---
+*.apk
+*.unitypackage
+*.app
+*.exe
+*.x86_64
+*.x86
+
+# --- ASSET SPECIFICI DA IGNORARE ---
+# Asset Store Tools spesso non servono nel repo
+AssetStoreTools*
+
+# ATTENZIONE: Plugins è commentato. Se lo scommenti, il progetto si rompe.
+# Plugins/
