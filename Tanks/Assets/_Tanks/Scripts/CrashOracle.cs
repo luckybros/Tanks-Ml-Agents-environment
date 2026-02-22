@@ -16,7 +16,7 @@ namespace Tanks.Complete
             sideChannel = new OracleSideChannel();
             
             // When a Debug.Log message is created, we send it to the channel
-            //Application.logMessageReceived += sideChannel.SendDebugStatementToPython;
+            Application.logMessageReceived += sideChannel.SendDebugStatementToPython;
 
             // The channel must be registered with the SideChannelManger class
             SideChannelManager.RegisterSideChannel(sideChannel);
@@ -29,7 +29,7 @@ namespace Tanks.Complete
 
         public void OnDestroy()
         {
-            //Application.logMessageReceived -= sideChannel.SendDebugStatementToPython;
+            Application.logMessageReceived -= sideChannel.SendDebugStatementToPython;
             if (Academy.IsInitialized)
             {
                 SideChannelManager.UnregisterSideChannel(sideChannel);
