@@ -22,6 +22,8 @@ namespace Tanks.Complete
 
         private Vector3 startPos;
         private Quaternion startRot;
+        private CSVLogger logger;
+        private float[] lastState = null;
         
         [SerializeField] private float areaSize = 50f;
         [SerializeField] private float maxSpeed = 12f;
@@ -37,23 +39,38 @@ namespace Tanks.Complete
             SaveStartPositions();
         }
 
+        private void Update()
+        {
+            if (GetCumulativeReward() >= 0.05){
+                Debug.Log("AAAA debug loc cucu");
+            }
+        }
         public override void CollectObservations(VectorSensor sensor)
         {
             if (useVectorObs)
             {
-                sensor.AddObservation(transform.localPosition.x / areaSize);
-                sensor.AddObservation(transform.localPosition.z / areaSize);
-                sensor.AddObservation(otherAgent.transform.localPosition.x / areaSize);
-                sensor.AddObservation(otherAgent.transform.localPosition.z / areaSize);
-                sensor.AddObservation(Mathf.Clamp(transform.InverseTransformDirection(rb.linearVelocity).z / tankMovement.m_Speed, -1, 1));
-                //sensor.AddObservation(transform.forward.x);
-                //sensor.AddObservation(transform.forward.z);
-                sensor.AddObservation((transform.localRotation.eulerAngles.y / 360f) * 2f - 1f);
-                sensor.AddObservation(tankShooting.m_CanShoot ? 1.0f : 0.0f); // can Shoot
-                sensor.AddObservation(tankHealth.m_CurrentHealth / tankHealth.m_StartingHealth);
-                sensor.AddObservation(otherTankHealth.m_CurrentHealth / otherTankHealth.m_StartingHealth);
-                sensor.AddObservation(tankShooting.m_ShotCooldownTimer);
+                foreach (float obs in GetCurrentStateArray())
+                {
+                    sensor.AddObservation(obs);
+                }
             }
+        }
+
+        private float[] GetCurrentStateArray()
+        {
+            return new float[]
+            {   
+                transform.localPosition.x / areaSize, 
+                transform.localPosition.z / areaSize,
+                otherAgent.transform.localPosition.x / areaSize,
+                otherAgent.transform.localPosition.z / areaSize,
+                Mathf.Clamp(transform.InverseTransformDirection(rb.linearVelocity).z / tankMovement.m_Speed, -1, 1),
+                (transform.localRotation.eulerAngles.y / 360f) * 2f - 1f,
+                tankShooting.m_CanShoot ? 1.0f : 0.0f,
+                tankHealth.m_CurrentHealth / tankHealth.m_StartingHealth,
+                otherTankHealth.m_CurrentHealth / otherTankHealth.m_StartingHealth,
+                tankShooting.m_ShotCooldownTimer
+            };
         }
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -61,6 +78,13 @@ namespace Tanks.Complete
             int moveAction = actionBuffers.DiscreteActions[0];
             int turnAction = actionBuffers.DiscreteActions[1];
             int shootAction = actionBuffers.DiscreteActions[2];
+
+            float currentReward = GetCumulativeReward();
+            if (lastState == null)
+            {
+                lastState = GetCurrentStateArray();
+            }
+            float[] action = {moveAction, turnAction, shootAction};
 
             switch (moveAction)
             {
@@ -115,6 +139,13 @@ namespace Tanks.Complete
             }
 
             AddReward(-0.0001f);
+
+            float[] newState = GetCurrentStateArray();
+            float stepReward = GetCumulativeReward() - currentReward;
+
+            logger.AddTransition(lastState, action, newState, stepReward, GetCumulativeReward());
+
+            lastState = newState;
         }
 
         public override void OnEpisodeBegin()
@@ -135,7 +166,8 @@ namespace Tanks.Complete
             tankMovement = GetComponent<TankMovementML>();
             tankShooting = GetComponent<TankShootingML>();
             tankHealth = GetComponent<TankHealthML>();
-            rb = GetComponent<Rigidbody>();     
+            rb = GetComponent<Rigidbody>();    
+            logger = GetComponent<CSVLogger>(); 
 
             tankMovement.m_IsMLAgentControlled = true; 
             tankShooting.m_IsMLAgentControlled = true;
@@ -185,7 +217,7 @@ namespace Tanks.Complete
             if (attacker != this)
             {
                 Debug.Log("Altro agente colpito!");
-                otherAgent.AddReward(0.1f);
+                attacker.AddReward(0.1f);
             }
             else
             {
@@ -200,14 +232,15 @@ namespace Tanks.Complete
             if (attacker != this)
             {
                 Debug.Log("Killed other agent!");
-                otherAgent.AddReward(1f);
+                attacker.AddReward(1f);
+                attacker.EndEpisode();
             }
             else 
             {
                 Debug.Log("Ucciso da solo");
             }
             EndEpisode();
-            otherAgent.EndEpisode();
+            // se attacker 
         }
     }
 }

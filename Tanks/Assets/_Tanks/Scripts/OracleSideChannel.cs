@@ -32,9 +32,9 @@ namespace Tanks.Complete
 
         public void SendDebugStatementToPython(string logString, string stackTrace, LogType type)
         {
-            if (type == LogType.Error)
+            if (type == LogType.Error || type == LogType.Exception)
             {
-                SendStringToPython(type.ToString() + ": " + logString + "\n" + stackTrace);
+                SendStringToPython("ERROR:" + ": " + logString + "\n" + stackTrace);
             }
         }
     }
