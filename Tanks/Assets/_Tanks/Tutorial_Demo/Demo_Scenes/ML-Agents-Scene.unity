@@ -256,7 +256,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 519178731113850141, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
       propertyPath: m_TagString
-      value: Untagged
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 519178731113850141, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -425,6 +425,10 @@ PrefabInstance:
     - target: {fileID: 2131908556940940877, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2160929980326691647, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
+      propertyPath: m_TagString
+      value: Obstacle
       objectReference: {fileID: 0}
     - target: {fileID: 2160929980326691647, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -875,6 +879,10 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 5675334433326732718, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
+      propertyPath: m_TagString
+      value: Obstacle
+      objectReference: {fileID: 0}
+    - target: {fileID: 5675334433326732718, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -1053,6 +1061,10 @@ PrefabInstance:
     - target: {fileID: 7270501295742237388, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 7273663630347032044, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
+      propertyPath: m_TagString
+      value: Obstacle
       objectReference: {fileID: 0}
     - target: {fileID: 7273663630347032044, guid: 05886ef6f9e6e804e81b6c1090ee17f8, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4593,6 +4605,50 @@ MonoBehaviour:
   m_RespawnCooldown: 20
   m_HasActivePowerUp: 0
   m_PowerUpType: 0
+--- !u!1 &1489765569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1489765571}
+  - component: {fileID: 1489765570}
+  m_Layer: 0
+  m_Name: Sabotatore
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1489765570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1489765569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f30be073c1e9e41778579baa038edf32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tanks.Complete.Sabotatore
+--- !u!4 &1489765571
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1489765569}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.21996, y: 7.99025, z: -17.44998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1530750146
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4869,6 +4925,10 @@ PrefabInstance:
       objectReference: {fileID: 524531427}
     - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
+      propertyPath: TeamId
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
@@ -7391,3 +7451,4 @@ SceneRoots:
   - {fileID: 416327937}
   - {fileID: 1586133410}
   - {fileID: 332659666}
+  - {fileID: 1489765571}

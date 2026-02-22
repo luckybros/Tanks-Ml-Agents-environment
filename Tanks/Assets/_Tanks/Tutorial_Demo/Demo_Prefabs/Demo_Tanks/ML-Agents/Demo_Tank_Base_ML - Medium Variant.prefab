@@ -94,7 +94,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6444775916240607648, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
       propertyPath: m_DetectableTags.Array.size
-      value: 7
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 6444775916240607648, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
       propertyPath: 'm_DetectableTags.Array.data[1]'
@@ -122,7 +122,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6444775916240607648, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
       propertyPath: 'm_DetectableTags.Array.data[7]'
-      value: SpeedUpShootingPowerUp
+      value: Obstacle
+      objectReference: {fileID: 0}
+    - target: {fileID: 6444775916240607648, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: 'm_DetectableTags.Array.data[8]'
+      value: Wall
       objectReference: {fileID: 0}
     - target: {fileID: 8737925352851444152, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
       propertyPath: m_Height
