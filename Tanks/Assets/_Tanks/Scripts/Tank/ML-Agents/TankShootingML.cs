@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using System;
 
 namespace Tanks.Complete
 {
@@ -54,6 +55,9 @@ namespace Tanks.Complete
         private bool m_IsCharging = false;          // Are we currently charging the shot
         private float m_BaseMinLaunchForce;         // The initial value of m_MinLaunchForce
         public float m_ShotCooldownTimer;          // The timer counting down before a shot is allowed again
+
+        // added, not original
+        public event Action<Vector2> ExplosionPositionNotification;
         
         private void OnEnable()
         {
@@ -265,6 +269,7 @@ namespace Tanks.Complete
             TankAgent agent = GetComponent<TankAgent>();
 
             ShellExplosionML explosionData = shellInstance.GetComponent<ShellExplosionML>();
+            explosionData.ExplosionPositionNotification += SendExplosionPositionToAgent;
             explosionData.m_ShootingAgent = agent;
             explosionData.m_ExplosionForce = m_ExplosionForce;
             explosionData.m_ExplosionRadius = m_ExplosionRadius;
@@ -336,6 +341,11 @@ namespace Tanks.Complete
             position.y = 0;
 
             return position;
+        }
+
+        private void SendExplosionPositionToAgent(Vector2 position)
+        {
+            ExplosionPositionNotification?.Invoke(position);
         }
     }
 }

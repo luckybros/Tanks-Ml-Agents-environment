@@ -2196,7 +2196,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &416327937
 Transform:
   m_ObjectHideFlags: 0
@@ -3160,45 +3160,30 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: m_Width
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1058269700}
     - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: m_Height
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_Enabled
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: m_Grayscale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: m_ObservationStacks
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 5022602860645237092, guid: c8b29b3ae7b0e432dbb7a616d8a7c446, type: 3}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_BehaviorType
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7768019873592815796, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     - {fileID: 1521431059820009530, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     - {fileID: 1521431059820018870, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
+    - {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4660,7 +4645,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1489765570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4858,10 +4843,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1586133410}
     m_Modifications:
-    - target: {fileID: 168592927555788836, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 22102142cf4af6e4f9cbd386250608aa, type: 2}
     - target: {fileID: 529712515142872390, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: tankId
       value: 1
@@ -4882,10 +4863,6 @@ PrefabInstance:
       propertyPath: useVectorObs
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 833472651615362339, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 22102142cf4af6e4f9cbd386250608aa, type: 2}
     - target: {fileID: 1521431059817413998, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.54913
@@ -4954,18 +4931,10 @@ PrefabInstance:
       propertyPath: m_ShootingAudio
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 5035456521147123877, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 22102142cf4af6e4f9cbd386250608aa, type: 2}
     - target: {fileID: 5507133717567302204, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6108033943252857355, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 22102142cf4af6e4f9cbd386250608aa, type: 2}
     - target: {fileID: 6647699201313588742, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_MovementAudio
       value: 
@@ -4979,28 +4948,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1720433416}
     - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: m_Width
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 524531427}
     - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: m_Height
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_Enabled
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: m_Grayscale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: m_ObservationStacks
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: TeamId
@@ -5009,19 +4962,20 @@ PrefabInstance:
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 5022602860645237092, guid: c8b29b3ae7b0e432dbb7a616d8a7c446, type: 3}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_BehaviorType
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7768019873592815796, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     - {fileID: 1521431059820018870, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     - {fileID: 1521431059820009530, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
+    - {fileID: 7808799393506157092, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

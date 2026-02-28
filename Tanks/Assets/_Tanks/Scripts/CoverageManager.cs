@@ -75,7 +75,7 @@ namespace Tanks.Complete
             {
                 visitedStates.Add(lastState.ToString());
 
-                statsRecorder.Add("Coverage/UniqueStates", visitedStates.Count);
+                statsRecorder.Add($"Coverage/UniqueStates/{System.Diagnostics.Process.GetCurrentProcess().Id}", visitedStates.Count);
             }
         }
 

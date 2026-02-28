@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace Tanks.Complete
 {
@@ -15,6 +16,9 @@ namespace Tanks.Complete
         [HideInInspector] public float m_ExplosionRadius = 5f;                // The maximum distance away from the explosion tanks can be and are still affected.
 
         [HideInInspector] public TankAgent m_ShootingAgent;
+
+        // added, not original
+        public event Action<Vector2> ExplosionPositionNotification;
 
         private void Start ()
         {
@@ -71,6 +75,10 @@ namespace Tanks.Complete
             Destroy (gameObject);
         }
 
+        private void OnDestroy()
+        {
+            ExplosionPositionNotification?.Invoke(new Vector2(transform.position.x, transform.position.z));;
+        }
 
         private float CalculateDamage (Vector3 targetPosition)
         {

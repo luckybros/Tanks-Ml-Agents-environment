@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8015a8eac3af7e94aa51752c84491c9a, type: 3}
       propertyPath: m_TagString
-      value: HealingPowerUp
+      value: PowerUp
       objectReference: {fileID: 0}
     - target: {fileID: 1603246306389932429, guid: 8015a8eac3af7e94aa51752c84491c9a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -133,7 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1292ea4e612464bfd84f779dd347b4ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tanks.Complete.PowerUpML
-  m_PowerUpType: 3
+  m_PowerUpType: 4
   m_CollectFX: {fileID: 8822060725471291870, guid: da1c8b323de15f84da1462d4bab0c020, type: 3}
   m_DurationTime: 5
   m_DamageReduction: 0.5

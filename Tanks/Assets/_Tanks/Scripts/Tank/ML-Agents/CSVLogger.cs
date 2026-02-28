@@ -7,6 +7,7 @@ namespace Tanks.Complete
 {
     public class CSVLogger : MonoBehaviour
     {
+        /*
         private string filepath;
         private StreamWriter file;
         // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -14,7 +15,7 @@ namespace Tanks.Complete
         {
             string ID = gameObject.GetInstanceID().ToString();
             string homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            filepath = Path.Combine(homePath, "Desktop", "Tesi", "ML_Agents_tesi", "simple_plugin", "mlagents_plugin", "config", "Tanks", $"TrainingLog{ID}.csv");
+            filepath = Path.Combine(homePath, "Desktop", "Tesi", "ML_Agents_tesi", "simple_plugin", "mlagents_plugin", "config", "Tanks", $"TrainingLog{ID}{System.Diagnostics.Process.GetCurrentProcess().Id}.csv");
             file = new StreamWriter(filepath, true);
             file.AutoFlush = true;
             if (new FileInfo(filepath).Length == 0)
@@ -59,5 +60,6 @@ namespace Tanks.Complete
                 file = null;
             }
         }
+        */
     }
 }
