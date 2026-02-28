@@ -74,7 +74,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3e31992d01bfdfd479e0bfab3bb9c896, type: 3}
       propertyPath: m_TagString
-      value: SpeedUpShootingPowerUp
+      value: PowerUp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1292ea4e612464bfd84f779dd347b4ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tanks.Complete.PowerUpML
-  m_PowerUpType: 2
+  m_PowerUpType: 3
   m_CollectFX: {fileID: 8822060725471291870, guid: da1c8b323de15f84da1462d4bab0c020, type: 3}
   m_DurationTime: 5
   m_DamageReduction: 0.5

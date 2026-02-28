@@ -10,6 +10,9 @@ namespace Tanks.Complete
 {
     public class TankAgent : Agent
     {
+        public int tankId;
+        public enum PowerUpType { None, Speed, DamageReduction, ShootingBonus, Healing, Invincibility, DamageMultiplier };
+        const int NUM_ITEM_TYPES = (int)PowerUpType.DamageMultiplier + 1;
         public Transform spawnPoint;
         public TankAgent otherAgent;
 
@@ -17,12 +20,13 @@ namespace Tanks.Complete
         private TankShootingML tankShooting;
         private TankHealthML tankHealth;
         private Rigidbody rb;
+        private PowerUpDetectorML powerUpDetector;
 
         private TankHealthML otherTankHealth;
 
         private Vector3 startPos;
         private Quaternion startRot;
-        private CSVLogger logger;
+        //private CSVLogger logger;
         private float[] lastState = null;
         
         [SerializeField] private float areaSize = 50f;
@@ -33,18 +37,14 @@ namespace Tanks.Complete
 
         private bool m_WasFireButtonPressed = false;
 
+        private float maxDistance = 9f;
+
         public override void Initialize()
         {
             GetComponents();
             SaveStartPositions();
         }
 
-        private void Update()
-        {
-            if (GetCumulativeReward() >= 0.05){
-                Debug.Log("AAAA debug loc cucu");
-            }
-        }
         public override void CollectObservations(VectorSensor sensor)
         {
             if (useVectorObs)
@@ -53,6 +53,7 @@ namespace Tanks.Complete
                 {
                     sensor.AddObservation(obs);
                 }
+                sensor.AddOneHotObservation((int)powerUpDetector.m_PowerUpType, NUM_ITEM_TYPES);
             }
         }
 
@@ -60,16 +61,16 @@ namespace Tanks.Complete
         {
             return new float[]
             {   
-                transform.localPosition.x / areaSize, 
-                transform.localPosition.z / areaSize,
-                otherAgent.transform.localPosition.x / areaSize,
-                otherAgent.transform.localPosition.z / areaSize,
-                Mathf.Clamp(transform.InverseTransformDirection(rb.linearVelocity).z / tankMovement.m_Speed, -1, 1),
-                (transform.localRotation.eulerAngles.y / 360f) * 2f - 1f,
+                //transform.localPosition.x / areaSize, 
+                //transform.localPosition.z / areaSize,
+                //otherAgent.transform.localPosition.x / areaSize,
+                //otherAgent.transform.localPosition.z / areaSize,
+                //Mathf.Clamp(transform.InverseTransformDirection(rb.linearVelocity).z / tankMovement.m_Speed, -1, 1),
+                //(transform.localRotation.eulerAngles.y / 360f) * 2f - 1f,
                 tankShooting.m_CanShoot ? 1.0f : 0.0f,
                 tankHealth.m_CurrentHealth / tankHealth.m_StartingHealth,
-                otherTankHealth.m_CurrentHealth / otherTankHealth.m_StartingHealth,
-                tankShooting.m_ShotCooldownTimer
+                //otherTankHealth.m_CurrentHealth / otherTankHealth.m_StartingHealth,
+                //tankShooting.m_ShotCooldownTimer
             };
         }
 
@@ -79,12 +80,12 @@ namespace Tanks.Complete
             int turnAction = actionBuffers.DiscreteActions[1];
             int shootAction = actionBuffers.DiscreteActions[2];
 
-            float currentReward = GetCumulativeReward();
-            if (lastState == null)
-            {
-                lastState = GetCurrentStateArray();
-            }
-            float[] action = {moveAction, turnAction, shootAction};
+            //float currentReward = GetCumulativeReward();
+            //if (lastState == null)
+            //{
+            //    lastState = GetCurrentStateArray();
+            //}
+            //float[] action = {moveAction, turnAction, shootAction};
 
             switch (moveAction)
             {
@@ -140,12 +141,12 @@ namespace Tanks.Complete
 
             AddReward(-0.0001f);
 
-            float[] newState = GetCurrentStateArray();
-            float stepReward = GetCumulativeReward() - currentReward;
+            //float[] newState = GetCurrentStateArray();
+            //float stepReward = GetCumulativeReward() - currentReward;
 
-            logger.AddTransition(lastState, action, newState, stepReward, GetCumulativeReward());
+            //logger.AddTransition(lastState, action, newState, stepReward, GetCumulativeReward());
 
-            lastState = newState;
+            //lastState = newState;
         }
 
         public override void OnEpisodeBegin()
@@ -167,7 +168,8 @@ namespace Tanks.Complete
             tankShooting = GetComponent<TankShootingML>();
             tankHealth = GetComponent<TankHealthML>();
             rb = GetComponent<Rigidbody>();    
-            logger = GetComponent<CSVLogger>(); 
+            powerUpDetector = GetComponent<PowerUpDetectorML>();
+            //logger = GetComponent<CSVLogger>(); 
 
             tankMovement.m_IsMLAgentControlled = true; 
             tankShooting.m_IsMLAgentControlled = true;
@@ -182,6 +184,7 @@ namespace Tanks.Complete
 
             tankHealth.DeathNotification += OnDeath;    // notification when dies
             tankHealth.DamageNotification += OnDamageTaken;
+            tankShooting.ExplosionPositionNotification += OnExplosion;
         }
 
         private void SaveStartPositions()
@@ -233,14 +236,35 @@ namespace Tanks.Complete
             {
                 Debug.Log("Killed other agent!");
                 attacker.AddReward(1f);
-                attacker.EndEpisode();
             }
             else 
             {
                 Debug.Log("Ucciso da solo");
             }
-            EndEpisode();
+            StartCoroutine(EndEpisodeDelayed());
             // se attacker 
+        }
+
+        private IEnumerator EndEpisodeDelayed()
+        {
+            yield return new WaitForEndOfFrame();
+            otherAgent.EndEpisode();
+            EndEpisode();
+        }
+
+        private void OnExplosion(Vector2 position)
+        {
+            float distance = Vector2.Distance(position, new Vector2(otherAgent.transform.position.x, otherAgent.transform.position.z));
+
+            if (distance <= maxDistance)
+            {
+                float reward = (1 - distance / maxDistance) * 0.1f;
+                AddReward(reward); 
+            }
+            if (tankId == 0)
+            {
+                Debug.Log($"Distance between projectile and enemy: {Vector2.Distance(position, new Vector2(otherAgent.transform.position.x, otherAgent.transform.position.z))}");
+            }
         }
     }
 }
