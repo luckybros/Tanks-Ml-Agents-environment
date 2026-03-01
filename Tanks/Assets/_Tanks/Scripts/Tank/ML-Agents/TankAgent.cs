@@ -157,9 +157,18 @@ namespace Tanks.Complete
         public override void Heuristic(in ActionBuffers actionsOut)
         {
             var discreteActions = actionsOut.DiscreteActions;
-            discreteActions[0] = Input.GetKey(KeyCode.W) ? 1 : (Input.GetKey(KeyCode.S) ? 2 : 0);
-            discreteActions[1] = Input.GetKey(KeyCode.D) ? 1 : (Input.GetKey(KeyCode.A) ? 2 : 0);
-            discreteActions[2] = Input.GetKey(KeyCode.Space) ? 1 : 0;
+            if (tankId == 0)
+            {
+                discreteActions[0] = Input.GetKey(KeyCode.W) ? 1 : (Input.GetKey(KeyCode.S) ? 2 : 0);
+                discreteActions[1] = Input.GetKey(KeyCode.D) ? 1 : (Input.GetKey(KeyCode.A) ? 2 : 0);
+                discreteActions[2] = Input.GetKey(KeyCode.Z) ? 1 : 0;
+            }
+            else
+            {
+                discreteActions[0] = Input.GetKey(KeyCode.UpArrow) ? 1 : (Input.GetKey(KeyCode.DownArrow) ? 2 : 0);
+                discreteActions[1] = Input.GetKey(KeyCode.LeftArrow) ? 1 : (Input.GetKey(KeyCode.RightArrow) ? 2 : 0);
+                discreteActions[2] = Input.GetKey(KeyCode.Space) ? 1 : 0;
+            }
         }
 
         private void GetComponents()
