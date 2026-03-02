@@ -28,10 +28,18 @@ namespace Tanks.Complete
         {
             if (type == LogType.Error || type == LogType.Exception)
             {
-                ReportBug(type);
+                if (type == LogType.Error)
+                {
+                    ReportBug("error", logString + " | " + stackTrace);
+                }
+                else if (type == LogType.Exception)
+                {
+                    ReportBug("exception", logString + " | " + stackTrace);
+                }
             }
         }
-        // Update is called once per frame
+        
+        /*
         void Update()
         {
             timer += Time.deltaTime;
@@ -67,5 +75,6 @@ namespace Tanks.Complete
         {
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
+        */
     }
 }

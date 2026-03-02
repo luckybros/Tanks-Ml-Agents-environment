@@ -1,6 +1,6 @@
 using UnityEngine;
 using Unity.MLAgents;
-using Unity.MLAgents.SideChannel;
+using Unity.MLAgents.SideChannels;
 using System.Collections;
 
 namespace Tanks.Complete
@@ -9,7 +9,6 @@ namespace Tanks.Complete
     /// Singleton with the unique instance of OracleSideChannel
     /// All the oracles passes from here in order to send messages to Python
     /// </summary>
-
     public class OracleManager: MonoBehaviour
     {
         public static OracleManager Instance { get; private set;}
@@ -45,7 +44,7 @@ namespace Tanks.Complete
 
             SideChannelManager.RegisterSideChannel(sideChannel);
 
-            sideChannel.SendStringToPython("START");
+            sideChannel.SendStringToPython("[START]");
         }
 
         private void OnDestroy()
@@ -79,7 +78,7 @@ namespace Tanks.Complete
         /// </summary>
         public void ReportGameLogicBug(string oracleName, string bugType, string message)
         {
-            string fullMessage = $"GAME_LOGIC_BUG|{oracleName}|{bugType}|{message}";
+            string fullMessage = $"[GAME_BUG]|{oracleName}|{bugType}|{message}";
             SendToPython(fullMessage);
         }
     }

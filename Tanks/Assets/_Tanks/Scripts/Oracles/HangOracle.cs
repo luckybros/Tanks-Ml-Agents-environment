@@ -23,7 +23,7 @@ namespace Tanks.Complete
 
             if (timer >= interval)
             {
-                SendToPython($"ALIVE");
+                SendToPython($"[ALIVE]");
                 timer = 0f;
             }
         }
