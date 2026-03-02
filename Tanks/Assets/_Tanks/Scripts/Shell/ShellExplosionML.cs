@@ -19,6 +19,7 @@ namespace Tanks.Complete
 
         // added, not original
         public event Action<Vector2> ExplosionPositionNotification;
+        public event Action<float, float, float> OnEnemyHit;
 
         private void Start ()
         {
@@ -51,11 +52,18 @@ namespace Tanks.Complete
                 if (!targetHealth)
                     continue;
 
+                float healthBeforeDamage = targetHealth.currentHealth;
+
                 // Calculate the amount of damage the target should take based on it's distance from the shell.
                 float damage = CalculateDamage (targetRigidbody.position);
 
                 // Deal this damage to the tank.
                 targetHealth.TakeDamage (damage, m_ShootingAgent);
+
+                // save damage and current health for the oracle, in order to see if the damage is taken
+                // DOPO che il nemico ha preso danno, controlla se è stato registrato
+                OnEnemyHit?.Invoke(targetHealth.currentHealth, currentHealth, damage);
+
             }
 
             // Unparent the particles from the shell.
