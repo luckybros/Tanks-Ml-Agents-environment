@@ -90,16 +90,17 @@ namespace Tanks.Complete
             if (errorTimestamps.ContainsKey(bugType))
             {
                 if (Time.time - errorTimestamps[bugType] < reportCooldown)
+                {
                     return;
+                }
             }
             errorTimestamps[bugType] = Time.time;
 
             Debug.LogWarning($"[{OracleName}] {message}");
 
-            if (sideChannel != null)
+            if (OracleManager.Instance != null)
             {
-                string fullMessage = $"GAME_LOGIC_BUG|{OracleName}|{bugType}|{message}";
-                sideChannel.SendStringToPython(fullMessage);
+                OracleManager.Instance.ReportGameLogicBug(OracleName, bugType, message);
             }
         }
     }

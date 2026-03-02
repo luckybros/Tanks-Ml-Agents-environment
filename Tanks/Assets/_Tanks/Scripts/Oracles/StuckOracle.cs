@@ -34,17 +34,15 @@ namespace Tanks.Complete
                 }
                 if (stateHistory.Count >= historySize && CheckIfStuck(currentState))
                 {
-                    Debug.LogError("[ERROR]: Possibile Stuck!");
-                    #if UNITY_EDITOR
-                        UnityEditor.EditorApplication.isPlaying = false;
-                    #else
-                        UnityEngine.Application.Quit();
-                    #endif
+                    if (OracleManager.Instance != null)
+                    {
+                        OracleManager.Instance.ReportGameLogicBug(
+                            "STUCK ORACLE",
+                            "stuck_detected",
+                            "Possible Stuck! Tank position doesn't change."
+                        );
+                    }
                 }
-                // controllare se il nuovo stato è diverso dalla medida
-                
-                // aggiugnerlo alla lista
-                // calcolare media (se ho raggiunto n)
                 timer = 0f;
             }
         }
