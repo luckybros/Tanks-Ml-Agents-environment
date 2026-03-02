@@ -5,43 +5,30 @@ using System.Collections;
 
 namespace Tanks.Complete
 {
-    public class CrashOracle : MonoBehaviour
+    /// <summary>
+    /// Captures errors and Unity exception (Debug.LogError, Exception)
+    /// and send them to Python as "ERROR:...".
+    /// </summary>
+    public class CrashOracle : OracleBase
     {
-        OracleSideChannel sideChannel;
-        int counter = 0;
-        float timer = 0f;
-        float interval = 1.0f;
+        protected override string OracleName => "CRASH ORACLE";
 
-        public void Start()
+        private void OnEnable()
         {
-            StartCoroutine(InitializeWhenReady());
+            // Captures Debug.LogError and exception
+            Application.logMessageReceived += OnLogMessageReceived;
         }
 
-        private IEnumerator InitializeWhenReady()
+        private void OnDisable()
         {
-            while (!Academy.IsInitialized)
-            {
-                Debug.Log("[CrashOracle] Waiting for Academy to initialize...");
-                yield return new WaitForSeconds(0.1f);
-            }
-
-            yield return null;
-
-            sideChannel = new OracleSideChannel();
-            
-            SideChannelManager.RegisterSideChannel(sideChannel);
-            // When a Debug.Log message is created, we send it to the channel
-            Application.logMessageReceived += sideChannel.SendDebugStatementToPython;
-
-            sideChannel.SendStringToPython("START");
+            Application.logMessageReceived -= OnLogMessageReceived;
         }
 
-        public void OnDestroy()
+        private void OnLogMessageReceived(string logString, string stackTrace, LogType type)
         {
-            Application.logMessageReceived -= sideChannel.SendDebugStatementToPython;
-            if (Academy.IsInitialized)
+            if (type == LogType.Error || type == LogType.Exception)
             {
-                SideChannelManager.UnregisterSideChannel(sideChannel);
+                ReportBug(type);
             }
         }
         // Update is called once per frame
