@@ -3,77 +3,79 @@ using System.Collections.Generic;
 
 namespace Tanks.Complete
 {
-    public class StuckOracle : MonoBehaviour
+    /// <summary>
+    /// Checks if the state of the game is stuck
+    /// checking the tanks positions.
+    /// </summary>
+    public class StuckOracle : OracleBase
     {
+        protected override string OracleName => "STUCK ORACLE";
+
+        [Header("Tanks references")]
+        [Tooltip("Tanks list to keep trak of")]
+        public List<Transform> tanks = new List<Transform>();
         public CoverageManager coverageManager;
 
-        private Queue<GlobalGameState> stateHistory = new Queue<GlobalGameState>();
         private GlobalGameState averageState;
 
-        private float timer = 0f;
+        [Header("Settings")]
+        [Tooltip("Time interval between a sampling and another one")]
         private float interval = 1.0f;
+        [Tooltip("Number of sample in history")]
         private int historySize = 5;
-        private int steps = 0;
+        [Tooltip("Threshold between states")]
         public float stuckThreshold = 0.5f;
 
-        // Update is called once per frame
-        void Update()
+        // private Queue<GlobalGameState> stateHistory = new Queue<GlobalGameState>();
+        //private int steps = 0;
+        // TODO: si potrebbe fare con lo stato normale
+        private List<Queue<Vector2>> positionHistories = new List<Queue<Vector2>>();
+        private float timer = 0f;
+        
+        private void Update()
         {
             timer += Time.deltaTime;
 
-            if (timer >= interval)
-            {
-                // get new state
-                GlobalGameState currentState = coverageManager.GetCurrentState();
-                
-                stateHistory.Enqueue(currentState);
+            if (timer < interval) return;
+            
+            timer = 0f;
 
-                if (stateHistory.Count > historySize)
+            // Check if every tank is stuck
+            for (int i = 0; i < tanks.Count; i++)
+            {
+                if (tanks[i] == null) continue;
+
+                Vector2 currentPos = Vector2(tanks[i].position.x, tanks[i].position.z);
+                var history = positionHistories[i];
+
+                history.Enqueue(currentPos);
+                if (history.Count > historySize)
                 {
-                    stateHistory.Dequeue();
+                    history.Dequeue();
                 }
-                if (stateHistory.Count >= historySize && CheckIfStuck(currentState))
+
+                if (history.Count >= historySize && IsStuck(currentPos, history))
                 {
-                    if (OracleManager.Instance != null)
-                    {
-                        OracleManager.Instance.ReportGameLogicBug(
-                            "STUCK ORACLE",
-                            "stuck_detected",
-                            "Possible Stuck! Tank position doesn't change."
-                        );
-                    }
+                    ReportBug(
+                        $"stuck_tank_{i}",
+                        $"Tank {i} stuck: the position doesn't change."
+                    );
                 }
-                timer = 0f;
             }
         }
 
-        private bool CheckIfStuck(GlobalGameState currentState)
+        private bool IsStuck(Vector2 currentPos, Queue<Vector2> history)
         {
-            float sumXTank1 = 0f;
-            float sumZTank1 = 0f;
-            float sumXTank2 = 0f;
-            float sumZTank2 = 0f;
+            Vector2 sum = Vector2.zero;
 
-            foreach (GlobalGameState s in stateHistory)
+            foreach (Vector2 pos in history)
             {
-                sumXTank1 += s.t1.x;
-                sumZTank1 += s.t1.z;
-                sumXTank2 += s.t2.x;
-                sumZTank2 += s.t2.z;
+                sum += pos;
             }
 
-            float averageXTank1 = sumXTank1 / stateHistory.Count;
-            float averageZTank1 = sumZTank1 / stateHistory.Count;
-            float averageXTank2 = sumXTank2 / stateHistory.Count;
-            float averageZTank2 = sumZTank2 / stateHistory.Count;
+            Vector2 average = sum / history.Count;
 
-            Vector2 currentPositionTank1 = new Vector2(currentState.t1.x, currentState.t1.z);
-            Vector2 currentPositionTank2 = new Vector2(currentState.t2.x, currentState.t2.z);
-            Vector2 averagePositionTank1 = new Vector2(averageXTank1, averageZTank1);
-            Vector2 averagePositionTank2 = new Vector2(averageXTank2, averageZTank2);
-
-            return Vector2.Distance(currentPositionTank1, averagePositionTank1) < stuckThreshold || 
-                    Vector2.Distance(currentPositionTank2, averagePositionTank2) < stuckThreshold;
+            return Vector2.Distance(currentPos, average) < stuckThreshold;
         }
     }
 }
