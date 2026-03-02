@@ -45,7 +45,7 @@ namespace Tanks.Complete
             {
                 if (tanks[i] == null) continue;
 
-                Vector2 currentPos = Vector2(tanks[i].position.x, tanks[i].position.z);
+                Vector2 currentPos = new Vector2(tanks[i].position.x, tanks[i].position.z);
                 var history = positionHistories[i];
 
                 history.Enqueue(currentPos);
