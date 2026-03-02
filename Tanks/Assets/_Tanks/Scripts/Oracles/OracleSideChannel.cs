@@ -29,13 +29,5 @@ namespace Tanks.Complete
                 QueueMessageToSend(msgOut);
             }
         }
-
-        public void SendDebugStatementToPython(string logString, string stackTrace, LogType type)
-        {
-            if (type == LogType.Error || type == LogType.Exception)
-            {
-                SendStringToPython("ERROR:" + ": " + logString + "\n" + stackTrace);
-            }
-        }
     }
 }

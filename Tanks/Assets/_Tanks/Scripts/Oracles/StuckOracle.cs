@@ -32,6 +32,13 @@ namespace Tanks.Complete
         private List<Queue<Vector2>> positionHistories = new List<Queue<Vector2>>();
         private float timer = 0f;
         
+        private void Start()
+        {
+            for (int i = 0; i < tanks.Count; i++)
+            {
+                positionHistories.Add(new Queue<Vector2>());
+            }
+        }
         private void Update()
         {
             timer += Time.deltaTime;
