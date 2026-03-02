@@ -30,11 +30,11 @@ namespace Tanks.Complete
             {
                 if (type == LogType.Error)
                 {
-                    ReportBug("error", logString + " | " + stackTrace);
+                    ReportBug("error", logString + " : " + stackTrace);
                 }
                 else if (type == LogType.Exception)
                 {
-                    ReportBug("exception", logString + " | " + stackTrace);
+                    ReportBug("exception", logString + " : " + stackTrace);
                 }
             }
         }

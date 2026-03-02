@@ -49,8 +49,7 @@ namespace Tanks.Complete
 
         private void OnDestroy()
         {
-            Application.logMessageReceived -= sideChannel.SendDebugStatementToPython;
-            if (Academy.IsInitialized)
+            if (sideChannel != null && Academy.IsInitialized)
             {
                 SideChannelManager.UnregisterSideChannel(sideChannel);
             }
