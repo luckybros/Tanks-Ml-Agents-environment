@@ -50,15 +50,21 @@ namespace Tanks.Complete
         public int canShoot;
         // public int cooldownTimer;
         public int powerUp;
+        public int hasProjectileInAir;
+        
         // adding a variable for the power ups (should i add also the position of the power ups?)
 
         // we could add information about the enemy and where the projectile is
-        public TankState(Transform transform, Rigidbody rb, float currentHP, bool canShoot, float cooldown, PowerUpML.PowerUpType type, float gridSize)
+        public TankState(Transform transform, Rigidbody rb, float currentHP, bool canShoot, float cooldown, PowerUpML.PowerUpType type, float gridSize, bool hasProjectileInAir)
         {
-            this.x = Mathf.FloorToInt(transform.position.x / gridSize);
-            this.z = Mathf.FloorToInt(transform.position.z / gridSize);
+            this.x = Mathf.FloorToInt(transform.localPosition.x / gridSize);
+            this.z = Mathf.FloorToInt(transform.localPosition.z / gridSize);
 
             this.vel = Mathf.FloorToInt(transform.InverseTransformDirection(rb.linearVelocity).z);
+            if (Mathf.Abs(vel) < 0.5f) this.vel = 0;     
+            else if (vel > 0.5f) this.vel = 1;           
+            else this.vel = -1;
+
             float rot = transform.eulerAngles.y;
             this.angle = Mathf.RoundToInt(rot / 45.0f) % 8;
 
@@ -73,6 +79,8 @@ namespace Tanks.Complete
             this.canShoot = canShoot ? 1 : 0;
 
             this.powerUp = (int) type;
+
+            this.hasProjectileInAir = hasProjectileInAir ? 1 : 0;
         }
 
         public bool Equals(TankState other)
@@ -84,13 +92,35 @@ namespace Tanks.Complete
                 health == other.health &&
                 canShoot == other.canShoot &&
                 //cooldownTimer == other.cooldownTimer &&
-                powerUp == other.powerUp; 
+                powerUp == other.powerUp &&
+                hasProjectileInAir == other.hasProjectileInAir; 
         }
 
         public override string ToString()
         {
-            return $"{x}_{z}_{vel}_{angle}_{health}_{canShoot}_{powerUp}";
+            return $"{x}_{z}_{vel}_{angle}_{health}_{canShoot}_{powerUp}_{hasProjectileInAir}";
         }
+
+        public override int GetHashCode()
+        {
+            unchecked 
+            {
+                int hash = 17;
+                // Esempio per TankState, ripeti logica simile per le altre
+                hash = hash * 31 + x.GetHashCode();
+                hash = hash * 31 + z.GetHashCode();
+                hash = hash * 31 + vel.GetHashCode();
+                hash = hash * 31 + angle.GetHashCode();
+                hash = hash * 31 + health.GetHashCode();
+                hash = hash * 31 + canShoot.GetHashCode();
+                hash = hash * 31 + powerUp.GetHashCode();
+                hash = hash * 31 + hasProjectileInAir.GetHashCode();
+                return hash;
+            }
+        }
+
+        public override bool Equals(object obj) => obj is TankState other && Equals(other);
+
     }
 
     public struct GlobalGameState: IEquatable<GlobalGameState>
@@ -100,45 +130,55 @@ namespace Tanks.Complete
         public TankState t1;
         public TankState t2;
 
-        public PowerUpState p1;
-        public PowerUpState p2;
-        public PowerUpState p3;
-        public PowerUpState p4;
+        //public PowerUpState p1;
+        //public PowerUpState p2;
+        //public PowerUpState p3;
+        //public PowerUpState p4;
 
         public GlobalGameState(
             TankState t1,
-            TankState t2,
-            PowerUpState p1,
-            PowerUpState p2,
-            PowerUpState p3,
-            PowerUpState p4)
+            TankState t2
+        //    PowerUpState p1,
+        //    PowerUpState p2,
+        //    PowerUpState p3,
+        //    PowerUpState p4
+        )
         {
             this.t1 = t1;
             this.t2 = t2;
-            this.p1 = p1;
-            this.p2 = p2;
-            this.p3 = p3;
-            this.p4 = p4;
+            //this.p1 = p1;
+            //this.p2 = p2;
+            //this.p3 = p3;
+            //this.p4 = p4;
         }
 
         public bool Equals(GlobalGameState other)
         {
             return t1.Equals(other.t1) &&
-                t2.Equals(other.t2) &&
-                p1.Equals(other.p1) &&
-                p2.Equals(other.p2) &&
-                p3.Equals(other.p3) &&
-                p4.Equals(other.p4);
+                t2.Equals(other.t2); 
+            //    p1.Equals(other.p1) &&
+            //    p2.Equals(other.p2) &&
+            //    p3.Equals(other.p3) &&
+            //    p4.Equals(other.p4);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked {
+                return (t1.GetHashCode() * 397) ^ t2.GetHashCode();
+            }
         }
 
         public override string ToString()
         {
-            return $"T1[{t1}]_T2[{t2}]_P1[{p1}]_P2[{p2}]_P3[{p3}]_P4[{p4}]";
+            return $"T1[{t1}]_T2[{t2}]";
+            //return $"T1[{t1}]_T2[{t2}]_P1[{p1}]_P2[{p2}]_P3[{p3}]_P4[{p4}]";
         }
 
         public string ToCompactString()
         {
-            return $"{t1}|{t2}|{p1}|{p2}|{p3}|{p4}";
+            return $"{t1}|{t2}";
+            //return $"{t1}|{t2}|{p1}|{p2}|{p3}|{p4}";
         }
 
     }

@@ -33,6 +33,7 @@ namespace Tanks.Complete
         [SerializeField] private float maxSpeed = 12f;
         [SerializeField] private float maxTurnSpeed = 12f;
 
+        [SerializeField] private EpisodeManager episodeManager;
         public bool useVectorObs;
 
         private bool m_WasFireButtonPressed = false;
@@ -194,6 +195,7 @@ namespace Tanks.Complete
             tankHealth.DeathNotification += OnDeath;    // notification when dies
             tankHealth.DamageNotification += OnDamageTaken;
             tankShooting.ExplosionPositionNotification += OnExplosion;
+            powerUpDetector.OnPowerUpApplied += OnPowerUpApplied;
         }
 
         private void SaveStartPositions()
@@ -257,8 +259,7 @@ namespace Tanks.Complete
         private IEnumerator EndEpisodeDelayed()
         {
             yield return new WaitForEndOfFrame();
-            otherAgent.EndEpisode();
-            EndEpisode();
+            episodeManager.EndEpisode();
         }
 
         private void OnExplosion(Vector2 position)
@@ -270,10 +271,11 @@ namespace Tanks.Complete
                 float reward = (1 - distance / maxDistance) * 0.1f;
                 AddReward(reward); 
             }
-            if (tankId == 0)
-            {
-                Debug.Log($"Distance between projectile and enemy: {Vector2.Distance(position, new Vector2(otherAgent.transform.position.x, otherAgent.transform.position.z))}");
-            }
+        }
+
+        private void OnPowerUpApplied()
+        {
+            AddReward(0.05f);
         }
     }
 }

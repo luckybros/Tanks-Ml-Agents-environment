@@ -9,6 +9,8 @@ namespace Tanks.Complete
         public ParticleSystem m_ExplosionParticles;         // Reference to the particles that will play on explosion.
         public AudioSource m_ExplosionAudio;                // Reference to the audio that will play on explosion.
         [HideInInspector] public float m_MaxLifeTime = 2f;  // The time in seconds before the shell is removed.
+        public bool bugVersionOne = false;
+        public bool bugVersionTwo;
 
         // All those are hidden in inspector as they will actually come from the TankShooting scripts
         [HideInInspector] public float m_MaxDamage = 100f;                    // The amount of damage done if the explosion is centred on a tank.
@@ -19,7 +21,7 @@ namespace Tanks.Complete
 
         // added, not original
         public event Action<Vector2> ExplosionPositionNotification;
-        public event Action<float, float, float> OnEnemyHit;
+        public static event Action<float, float, float> OnEnemyHit;
 
         private void Start ()
         {
@@ -52,18 +54,29 @@ namespace Tanks.Complete
                 if (!targetHealth)
                     continue;
 
-                float healthBeforeDamage = targetHealth.currentHealth;
+                float healthBeforeDamage = targetHealth.m_CurrentHealth;
 
                 // Calculate the amount of damage the target should take based on it's distance from the shell.
                 float damage = CalculateDamage (targetRigidbody.position);
 
-                // Deal this damage to the tank.
-                targetHealth.TakeDamage (damage, m_ShootingAgent);
 
+                if (bugVersionOne)
+                {
+                    Debug.Log($"Bug Damage One:");
+                    if (targetHealth.m_CurrentHealth > targetHealth.m_StartingHealth * 0.3f)
+                    {
+                        targetHealth.TakeDamage (damage, m_ShootingAgent);
+                    }
+                }
+                else
+                {
+                    targetHealth.TakeDamage (damage, m_ShootingAgent);
+                }
+                // Deal this damage to the tank.
+                //targetHealth.TakeDamage (damage, m_ShootingAgent);
                 // save damage and current health for the oracle, in order to see if the damage is taken
                 // DOPO che il nemico ha preso danno, controlla se è stato registrato
-                OnEnemyHit?.Invoke(targetHealth.currentHealth, currentHealth, damage);
-
+                OnEnemyHit?.Invoke(healthBeforeDamage, targetHealth.m_CurrentHealth, damage);
             }
 
             // Unparent the particles from the shell.
@@ -100,8 +113,23 @@ namespace Tanks.Complete
             float relativeDistance = (m_ExplosionRadius - explosionDistance) / m_ExplosionRadius;
 
             // Calculate damage as this proportion of the maximum possible damage.
-            float damage = relativeDistance * m_MaxDamage;
+            float damage = m_MaxDamage;
 
+
+            if (bugVersionTwo)
+            {
+                Vector3 distanceBetweenTanks = targetPosition - m_ShootingAgent.transform.position;
+                float distanceBetweenTanksMagnitude = distanceBetweenTanks.magnitude;
+                Debug.Log($"explosion Distante: {distanceBetweenTanksMagnitude}!");
+                int distInt = Mathf.FloorToInt(distanceBetweenTanksMagnitude);
+                Debug.Log($"distInt: {distInt}");
+                //BUG CRASH: bonus danno ravvicinato — FloorToInt(0.8) = 0 → divisione per zero
+                int bonusDamage = Mathf.FloorToInt(m_MaxDamage) / distInt;
+                // damage = damage * m_ExplosionRadius / distInt;
+            }
+                
+            damage *= relativeDistance;
+            
             // Make sure that the minimum damage is always 0.
             damage = Mathf.Max (0f, damage);
 

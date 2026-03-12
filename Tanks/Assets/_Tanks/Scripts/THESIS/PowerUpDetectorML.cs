@@ -9,6 +9,7 @@ namespace Tanks.Complete
         // Variable that indicates if the tank has a PowerUp right now
         public bool m_HasActivePowerUp = false;
         public PowerUpML.PowerUpType m_PowerUpType = PowerUpML.PowerUpType.None;
+        public bool bugVersion;
         // References to the tank's components
         private TankShootingML m_TankShooting;
         private TankMovementML m_TankMovement;
@@ -20,7 +21,8 @@ namespace Tanks.Complete
         /// Parametro: il tipo di power-up raccolto.
         /// Gli oracoli si registrano qui per fare le asserzioni.
         /// </summary>
-        public event Action<PowerUpML.PowerUpType> OnPowerUpApplied;
+        public static event Action<float, float, float> OnHealingApplied;
+        public event Action OnPowerUpApplied;
 
         private void Awake()
         {
@@ -35,6 +37,7 @@ namespace Tanks.Complete
         public void PowerUpSpeed(float speedBoost, float turnSpeedBoost, float duration)
         {
             m_PowerUpType = PowerUpML.PowerUpType.Speed;
+            OnPowerUpApplied?.Invoke();
             StartCoroutine(IncreaseSpeed(speedBoost, turnSpeedBoost, duration));
         }
 
@@ -48,7 +51,7 @@ namespace Tanks.Complete
             m_TankMovement.m_TurnSpeed += TurnSpeedBoost;
 
             // >>> NOTIFICA GLI ORACOLI <<<
-            OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.Speed);
+            // OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.Speed);
 
             // Wait for the duration of the power up
             yield return new WaitForSeconds(duration);
@@ -63,6 +66,7 @@ namespace Tanks.Complete
         public void PowerUpShoootingRate(float cooldownReduction, float duration)
         {
             m_PowerUpType = PowerUpML.PowerUpType.ShootingBonus;
+            OnPowerUpApplied?.Invoke();
             StartCoroutine(IncreaseShootingRate(cooldownReduction, duration));
         }
 
@@ -77,7 +81,7 @@ namespace Tanks.Complete
                 m_TankShooting.m_ShotCooldown *= cooldownReduction;
 
                 // >>> NOTIFICA GLI ORACOLI <<<
-                OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.ShootingBonus);
+                // OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.ShootingBonus);
 
                 // Wait for the duration of the power up
                 yield return new WaitForSeconds(duration);
@@ -92,6 +96,7 @@ namespace Tanks.Complete
         public void PickUpShield(float shieldAmount, float duration)
         {
             if (!m_TankHealth.m_HasShield)
+                OnPowerUpApplied?.Invoke();
                 m_PowerUpType = PowerUpML.PowerUpType.DamageReduction;
                 StartCoroutine(ActivateShield(shieldAmount, duration));
         }
@@ -104,8 +109,18 @@ namespace Tanks.Complete
             m_PowerUpHUD.SetActivePowerUp(PowerUp.PowerUpType.DamageReduction, duration);
             m_TankHealth.ToggleShield(shieldAmount);
 
+            // HANG BUG: scudo a vita piena, hang
+            /*
+            if (bugVersion)
+            {
+                if (m_TankHealth.m_CurrentHealth >= m_TankHealth.m_StartingHealth)
+                {
+                    while (true) {}
+                }
+            }
+            */
             // >>> NOTIFICA GLI ORACOLI <<<
-            OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.DamageReduction);
+            // OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.DamageReduction);
 
             // Wait for the duration of the power up
             yield return new WaitForSeconds(duration);
@@ -118,17 +133,22 @@ namespace Tanks.Complete
         // Increases the health of the tank
         public void PowerUpHealing(float healAmount)
         {
+            float healthBefore = m_TankHealth.m_CurrentHealth;
+            OnPowerUpApplied?.Invoke();
+
             m_TankHealth.IncreaseHealth(healAmount);
             m_PowerUpHUD.SetActivePowerUp(PowerUp.PowerUpType.Healing, 1.0f);
 
             // >>> NOTIFICA GLI ORACOLI <<<
-            OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.Healing);
+            OnHealingApplied?.Invoke(healthBefore, m_TankHealth.m_CurrentHealth, healAmount);
+            //OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.Healing);
         }
 
         // Makes the tank invulnerable for an amount of time
         public void PowerUpInvincibility(float duration)
         {
             m_PowerUpType = PowerUpML.PowerUpType.Invincibility;
+            OnPowerUpApplied?.Invoke();
             StartCoroutine(ActivateInvincibility(duration));
         }
 
@@ -139,7 +159,7 @@ namespace Tanks.Complete
             m_TankHealth.ToggleInvincibility();
 
             // >>> NOTIFICA GLI ORACOLI <<<
-            OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.Invincibility);
+            //OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.Invincibility);
 
             yield return new WaitForSeconds(duration);
             m_HasActivePowerUp = false;
@@ -148,15 +168,21 @@ namespace Tanks.Complete
         }
 
         // Equips the tank with a special shell that increases damage
+        
         public void PowerUpSpecialShell(float damageMultiplier)
         {
             m_HasActivePowerUp = true;
+            OnPowerUpApplied?.Invoke();
             m_PowerUpType = PowerUpML.PowerUpType.DamageMultiplier;
             m_PowerUpHUD.SetActivePowerUp(PowerUp.PowerUpType.DamageMultiplier, 0f);
             m_TankShooting.EquipSpecialShell(damageMultiplier);
-
+            m_TankShooting.OnExplosionEnanched += () => {
+                m_HasActivePowerUp = false;
+                m_PowerUpType = PowerUpML.PowerUpType.None;
+            };
             // >>> NOTIFICA GLI ORACOLI <<<
-            OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.DamageMultiplier);
+            // ?.Invoke(PowerUpML.PowerUpType.DamageMultiplier);
         }
+        
     }
 }

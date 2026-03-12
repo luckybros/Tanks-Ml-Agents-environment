@@ -6,7 +6,7 @@ namespace Tanks.Complete
 {
     public class CoverageManager : MonoBehaviour
     {
-        public float cellSize = 3.0f;
+        public float cellSize = 5.0f;
         
         [Header("Tank References")]
         [Tooltip("Reference to Tank T1")]
@@ -34,7 +34,9 @@ namespace Tanks.Complete
         private Rigidbody tank2Rb;
         private PowerUpDetectorML tank2Detector;
 
-        private HashSet<string> visitedStates = new HashSet<string>();
+        private HashSet<TankState> visitedStates= new HashSet<TankState>();
+        //private HashSet<TankState> visitedStatesT2 = new HashSet<TankState>();
+        private HashSet<GlobalGameState> visitedGlobalStates = new HashSet<GlobalGameState>();
 
         private bool isFirstFrame = true;
         private GlobalGameState lastState;
@@ -55,28 +57,25 @@ namespace Tanks.Complete
         // Update is called once per frame
         void FixedUpdate()
         {
-            // calcolo posizione
-            // calcolo se sta sparando o meno
-            // calcolo vita
-            // calcolo rotazione
-            // ottengo TankState
+            // dovrei calcolare un gamestate per coppia di tanks
             GlobalGameState currentState = CaptureGlobalGameState();
-            // se è uguale al precedente (non ho cambiamento) oppure è il primo frame vado avanti
+            
             if (!isFirstFrame && currentState.Equals(lastState))
-            {
                 return;
-            }
-            // salvo lastState con quello ottenuto
+
             lastState = currentState;
             if (isFirstFrame) isFirstFrame = false;
-        
-            // vedo se è presente nell'hashmap, se non è presente lo aggiungo
-            if (!visitedStates.Contains(lastState.ToString()))
-            {
-                visitedStates.Add(lastState.ToString());
+            
+            // ora fanno parte di un unico unique states
+            bool newT1 = visitedStates.Add(lastState.t1);
+            bool newT2 = visitedStates.Add(lastState.t2);
+            bool newGlobal = visitedGlobalStates.Add(lastState);
 
-                statsRecorder.Add($"Coverage/UniqueStates/{System.Diagnostics.Process.GetCurrentProcess().Id}", visitedStates.Count);
-            }
+            //Debug.Log($"[STATE] {lastState.ToCompactString()} | newT1={newT1} newT2={newT2} newGlobal={newGlobal}");
+
+            if (newT1) statsRecorder.Add("Coverage/UniqueStates", visitedStates.Count);
+            //if (newT2) statsRecorder.Add("Coverage/UniqueStates_T2", visitedStatesT2.Count);
+            if (newGlobal) statsRecorder.Add("Coverage/GlobalUniqueStates", visitedGlobalStates.Count);
         }
 
         private GlobalGameState CaptureGlobalGameState()
@@ -88,7 +87,8 @@ namespace Tanks.Complete
                 tank1Shooting.m_CanShoot, 
                 tank1Shooting.m_ShotCooldownTimer,
                 tank1Detector.m_PowerUpType,
-                cellSize
+                cellSize,
+                tank1Shooting.HasProjectileInAir
             );
 
             TankState t2 = new TankState(
@@ -98,9 +98,11 @@ namespace Tanks.Complete
                 tank2Shooting.m_CanShoot, 
                 tank2Shooting.m_ShotCooldownTimer,
                 tank2Detector.m_PowerUpType,
-                cellSize
+                cellSize,
+                tank2Shooting.HasProjectileInAir
             );
 
+            /*
             PowerUpState p1 = powerUpSpawner1.m_HasActivePowerUp ? 
                 new PowerUpState(powerUpSpawner1.transform,
                                 powerUpSpawner1.m_PowerUpType,
@@ -122,7 +124,8 @@ namespace Tanks.Complete
                                 cellSize) :
                 new PowerUpState(powerUpSpawner4.transform, cellSize);
 
-            return new GlobalGameState(t1, t2, p1, p2, p3, p4);
+            */
+            return new GlobalGameState(t1, t2);
         }
 
         private void InitializeTankComponents()

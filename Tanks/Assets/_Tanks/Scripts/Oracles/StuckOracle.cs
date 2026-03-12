@@ -14,7 +14,7 @@ namespace Tanks.Complete
         [Header("Tanks references")]
         [Tooltip("Tanks list to keep trak of")]
         public List<Transform> tanks = new List<Transform>();
-        public CoverageManager coverageManager;
+        private CoverageManager coverageManager;
 
         private GlobalGameState averageState;
 
@@ -22,21 +22,24 @@ namespace Tanks.Complete
         [Tooltip("Time interval between a sampling and another one")]
         private float interval = 1.0f;
         [Tooltip("Number of sample in history")]
-        private int historySize = 5;
+        private int historySize = 20;
         [Tooltip("Threshold between states")]
-        public float stuckThreshold = 0.5f;
+        public float stuckThreshold = 0.1f;
 
         // private Queue<GlobalGameState> stateHistory = new Queue<GlobalGameState>();
         //private int steps = 0;
         // TODO: si potrebbe fare con lo stato normale
         private List<Queue<Vector2>> positionHistories = new List<Queue<Vector2>>();
+        private List<TankMovementML> tankMovements = new List <TankMovementML>();
         private float timer = 0f;
         
         private void Start()
         {
+            // Debug.Log($"Start Stuck oracle");
             for (int i = 0; i < tanks.Count; i++)
             {
                 positionHistories.Add(new Queue<Vector2>());
+                tankMovements.Add(tanks[i].GetComponent<TankMovementML>());
             }
         }
         private void Update()
@@ -61,8 +64,12 @@ namespace Tanks.Complete
                     history.Dequeue();
                 }
 
-                if (history.Count >= historySize && IsStuck(currentPos, history))
+                // check if the tank movement is taking an input, if is not moving per scelta non c'è bisogno
+                bool isTryingToMove = tankMovements[i].IsMoving || tankMovements[i].IsTurning;
+
+                if (history.Count >= historySize && isTryingToMove && IsStuck(currentPos, history))
                 {
+                    Debug.Log($"Stuck!");
                     ReportBug(
                         $"stuck_tank_{i}",
                         $"Tank {i} stuck: the position doesn't change."

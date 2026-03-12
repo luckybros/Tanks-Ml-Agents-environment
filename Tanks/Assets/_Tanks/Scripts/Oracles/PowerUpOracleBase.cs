@@ -1,3 +1,4 @@
+#if DISATTIVATO
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -95,3 +96,4 @@ namespace Tanks.Complete
         }
     }
 }
+#endif

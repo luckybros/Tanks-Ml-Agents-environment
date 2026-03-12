@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 192454, guid: 0e3ccf44b397044a39ed89eadf0a94cd, type: 3}
       propertyPath: m_Name
-      value: CompleteShellML
+      value: CompleteShellML Variant_Medium
       objectReference: {fileID: 0}
     - target: {fileID: 498018, guid: 0e3ccf44b397044a39ed89eadf0a94cd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -50,6 +50,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 498018, guid: 0e3ccf44b397044a39ed89eadf0a94cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4361277450881264011, guid: 0e3ccf44b397044a39ed89eadf0a94cd, type: 3}
+      propertyPath: bugVersion
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
