@@ -1501,7 +1501,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &161047101
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1570,7 +1570,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &161047103
 MeshFilter:
@@ -1589,7 +1588,7 @@ Transform:
   m_GameObject: {fileID: 161047100}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 0.42, z: 16.98}
+  m_LocalPosition: {x: -44.4, y: 0, z: 24.6565}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3077,10 +3076,6 @@ PrefabInstance:
       propertyPath: useVectorObs
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 529712515142872390, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: episodeManager
-      value: 
-      objectReference: {fileID: 1646559383}
     - target: {fileID: 1521431059817413998, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.54913
@@ -3147,11 +3142,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2047548872671414638, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: bugVersion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2331148013659635358, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: bugVersion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2331148013659635358, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_ShootingAudio
@@ -3211,7 +3206,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8258713478905428916, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: bugVersion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_Model
@@ -3219,7 +3214,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_BehaviorType
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
@@ -3250,7 +3245,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1034922797
 Transform:
   m_ObjectHideFlags: 0
@@ -3624,7 +3619,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1137913804
 Transform:
   m_ObjectHideFlags: 0
@@ -3704,7 +3699,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1177776319
 Transform:
   m_ObjectHideFlags: 0
@@ -4043,7 +4038,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1291963750
 MeshFilter:
@@ -4339,7 +4333,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1382759557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4352,7 +4346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8377dfbf85da40bb8c249c044d550ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tanks.Complete.CoverageManager
-  cellSize: 5
+  cellSize: 3
   tank1: {fileID: 537670471}
   tank2: {fileID: 1720433416}
   powerUpSpawner1: {fileID: 1280822802}
@@ -5140,7 +5134,6 @@ Transform:
   - {fileID: 1154237999}
   - {fileID: 938171901}
   - {fileID: 1291963746}
-  - {fileID: 1646559382}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1594187500
@@ -5175,10 +5168,6 @@ PrefabInstance:
       propertyPath: useVectorObs
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 529712515142872390, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
-      propertyPath: episodeManager
-      value: 
-      objectReference: {fileID: 1646559383}
     - target: {fileID: 833472651615362339, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -5249,11 +5238,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2047548872671414638, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: bugVersion
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2331148013659635358, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: bugVersion
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2331148013659635358, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_ShootingAudio
@@ -5321,7 +5310,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_BehaviorType
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9072253172635179042, guid: 8a4b81991484b42049b0920b74cf6068, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
@@ -5341,58 +5330,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8487406043480985791, guid: 328826c1fd47c3e4bb07a1dec3ec4c19, type: 3}
   m_PrefabInstance: {fileID: 4834583141238145242}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1646559381
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1646559382}
-  - component: {fileID: 1646559383}
-  m_Layer: 0
-  m_Name: EpisodeManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1646559382
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1646559381}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1586133410}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1646559383
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1646559381}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35b616af4e5a6414ab5585936eb781be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Tanks.Complete.EpisodeManager
-  agents:
-  - {fileID: 537670473}
-  - {fileID: 1720433418}
-  powerUpSpawners:
-  - {fileID: 1280822802}
-  - {fileID: 1889927103}
-  - {fileID: 1530750148}
-  - {fileID: 1444061139}
 --- !u!1001 &1665215028
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5857,7 +5794,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1900231028
 Transform:
   m_ObjectHideFlags: 0

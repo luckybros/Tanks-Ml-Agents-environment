@@ -13,6 +13,7 @@ namespace Tanks.Complete
         public Color m_ZeroHealthColor = Color.red;
         public GameObject m_ExplosionPrefab;
         [HideInInspector] public bool m_HasShield;
+        public bool bugVersion;
         
         private AudioSource m_ExplosionAudio;
         private ParticleSystem m_ExplosionParticles;
@@ -56,6 +57,15 @@ namespace Tanks.Complete
                 m_CurrentHealth -= amount * (1 - m_ShieldValue);
                 SetHealthUI ();
 
+                // BUG HANG: "ricalcola finché il danno non è validato con lo scudo"
+                // m_HasShield è true quando lo scudo è attivo
+                // m_CurrentHealth > 0 perché lo scudo riduce il danno (non lo azzera)
+                /*
+                if (bugVersion)
+                {
+                    while (m_HasShield && m_CurrentHealth > 0) {}
+                }
+                */
                 // >>> NOTIFICA GLI ORACOLI <<<
                 OnHealthChanged?.Invoke();
 
@@ -72,13 +82,28 @@ namespace Tanks.Complete
 
         public void IncreaseHealth(float amount)
         {
-            if (m_CurrentHealth + amount <= m_StartingHealth)
+            if (bugVersion)
             {
-                m_CurrentHealth += amount;
+                // LOGIC BUG: >= invece di <=
+                if (m_CurrentHealth + amount >= m_StartingHealth)
+                {
+                    m_CurrentHealth += amount;
+                }
+                else
+                {
+                    m_CurrentHealth = m_StartingHealth;
+                }
             }
             else
             {
-                m_CurrentHealth = m_StartingHealth;
+                if (m_CurrentHealth + amount <= m_StartingHealth)
+                {
+                    m_CurrentHealth += amount;
+                }
+                else
+                {
+                    m_CurrentHealth = m_StartingHealth;
+                }
             }
             SetHealthUI();
 

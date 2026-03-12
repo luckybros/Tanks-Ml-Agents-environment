@@ -1,79 +1,50 @@
+using UnityEngine;
+
 namespace Tanks.Complete
 {
     /// <summary>
-    /// Detects Bug 7: Healing power-up causes health to exceed maximum.
-    /// Tracks health before and after healing pickup.
-    /// Subscribes to both OnHealthChanged and OnPowerUpApplied.
+    /// Detects Bug 7: Healing causes health to exceed maximum.
+    /// Subscribes to PowerUpDetectorML.OnHealingApplied (static event).
+    /// Receives health before, health after, and heal amount.
+    /// Just checks if the numbers make sense.
     /// </summary>
-    public class HealingPowerUpOracle : GameLogicOracleBase
+    public class HealingPowerUpOracle : OracleBase
     {
         protected override string OracleName => "HEALING POWERUP ORACLE";
 
-        // Per-tank: previous health value (before the last health change)
-        private float[] previousHealth;
-        // Per-tank: current health value (after the last health change)
-        private float[] currentHealth;
+        private float maxHealth = 100f;
 
-        protected override void RegisterEvents()
+        private void OnEnable()
         {
-            previousHealth = new float[TankCount];
-            currentHealth = new float[TankCount];
-
-            for (int i = 0; i < TankCount; i++)
-            {
-                if (healths[i] != null)
-                {
-                    previousHealth[i] = healths[i].m_CurrentHealth;
-                    currentHealth[i] = healths[i].m_CurrentHealth;
-
-                    int idx = i;
-                    // Every time health changes, shift the values
-                    healths[i].OnHealthChanged += () => OnHealthChanged(idx);
-                }
-
-                if (powerUps[i] != null)
-                {
-                    int idx = i;
-                    // When Healing is picked up, do the assertions
-                    powerUps[i].OnPowerUpApplied += (type) => OnPowerUpPickup(idx, type);
-                }
-            }
+            PowerUpDetectorML.OnHealingApplied += OnHealingApplied;
         }
 
-        private void OnHealthChanged(int index)
+        private void OnDisable()
         {
-            if (!IsTankActive(index)) return;
-            if (healths[index] == null) return;
-
-            // Shift: current becomes previous, new value becomes current
-            previousHealth[index] = currentHealth[index];
-            currentHealth[index] = healths[index].m_CurrentHealth;
+            PowerUpDetectorML.OnHealingApplied -= OnHealingApplied;
         }
 
-        private void OnPowerUpPickup(int index, PowerUpML.PowerUpType type)
+        private void OnHealingApplied(float healthBefore, float healthAfter, float healAmount)
         {
-            if (type != PowerUpML.PowerUpType.Healing) return;
-            if (!IsTankActive(index)) return;
-            if (healths[index] == null) return;
+            if (healAmount <= 0f) return;
 
-            float before = previousHealth[index];
-            float after = healths[index].m_CurrentHealth;
-            float max = healths[index].m_StartingHealth;
-
-            // Check 1: health should have increased (unless it was already full)
-            if (before < max && after <= before)
+            // Check 1: health should have increased (unless already full)
+            if (healthBefore < maxHealth && healthAfter <= healthBefore)
             {
-                ReportBug($"healing_no_effect_t{index}",
-                    $"Tank{index}: Healing picked up but health didn't increase! " +
-                    $"Before: {before:F2}, After: {after:F2}, Max: {max}.");
+                ReportBug("healing_no_effect",
+                    $"Healing picked up but health didn't increase! " +
+                    $"Before: {healthBefore:F2}, After: {healthAfter:F2}, " +
+                    $"HealAmount: {healAmount:F2}.");
             }
 
             // Check 2: health should NEVER exceed the maximum
-            if (after > max + 0.01f)
+            if (healthAfter > maxHealth + 0.01f)
             {
-                ReportBug($"healing_over_max_t{index}",
-                    $"Tank{index}: Healing caused health to exceed maximum! " +
-                    $"Before: {before:F2}, After: {after:F2}, Max: {max}.");
+                Debug.Log($"[LOGIC BUG DETECTED]: Before: {healthBefore:F2}, After: {healthAfter:F2}");
+                ReportBug("healing_over_max",
+                    $"Healing caused health to exceed maximum! " +
+                    $"Before: {healthBefore:F2}, After: {healthAfter:F2}, " +
+                    $"HealAmount: {healAmount:F2}, Max: {maxHealth}.");
             }
         }
     }

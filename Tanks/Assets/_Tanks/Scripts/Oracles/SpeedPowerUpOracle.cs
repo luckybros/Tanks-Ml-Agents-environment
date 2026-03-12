@@ -1,3 +1,4 @@
+#if DISATTIVATO
 namespace Tanks.Complete
 {
     public class SpeedPowerUpOracle : PowerUpOracleBase
@@ -20,3 +21,4 @@ namespace Tanks.Complete
         }
     }
 }
+#endif

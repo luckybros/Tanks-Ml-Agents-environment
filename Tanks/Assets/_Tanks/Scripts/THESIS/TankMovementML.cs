@@ -36,6 +36,10 @@ namespace Tanks.Complete
         private Rigidbody m_Rigidbody;              // Reference used to move the tank.
         [HideInInspector] public float m_MovementInputValue;         // The current value of the movement input.
         [HideInInspector] public float m_TurnInputValue;             // The current value of the turn input.
+
+        public bool IsMoving => Mathf.Abs(m_MovementInputValue) > 0.1f;
+        public bool IsTurning => Mathf.Abs(m_TurnInputValue) > 0.1f;
+        
         private Vector3 m_ExplosionForceValue;      // The current value of the force  applied on the tank from an explosion.
         private float m_OriginalPitch;              // The pitch of the audio source at the start of the scene.
         private ParticleSystem[] m_particleSystems; // References to all the particles systems used by the Tanks

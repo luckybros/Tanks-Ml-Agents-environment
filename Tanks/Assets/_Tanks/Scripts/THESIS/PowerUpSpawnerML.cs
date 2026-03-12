@@ -13,6 +13,8 @@ namespace Tanks.Complete
         public bool m_HasActivePowerUp = false;
         public PowerUpML.PowerUpType m_PowerUpType;
 
+        private GameObject currentPowerup;
+
 
         private void Start()
         {
@@ -21,18 +23,22 @@ namespace Tanks.Complete
             SpawnRandomPowerUp();
         }
 
+
         private void SpawnRandomPowerUp()
         {
             // Ensure there are power ups available to spawn.
             if (m_PowerUps.Length > 0)
             {
                 // Instantiates a random power up from the power ups array
+                if (currentPowerup != null)
+                    Destroy(currentPowerup);
                 int randomNumber = Random.Range(0, m_PowerUps.Length);
                 Vector3 positionToSpawn = transform.position;
                 positionToSpawn.y = 1.09f;
                 PowerUpML m_SpawnedPowerup = Instantiate(m_PowerUps[randomNumber], positionToSpawn, Quaternion.identity);
                 m_PowerUpType = m_SpawnedPowerup.GetPowerUpType();  // added for state coverage
                 m_SpawnedPowerup.SetSpawner(this);
+                currentPowerup = m_SpawnedPowerup.gameObject;
             }
         }
 
@@ -49,6 +55,11 @@ namespace Tanks.Complete
             yield return new WaitForSeconds(m_RespawnCooldown);
             SpawnRandomPowerUp();
             m_HasActivePowerUp = true;
+        }
+
+        public void EndEpisode()
+        {
+            SpawnRandomPowerUp();
         }
     }
 }

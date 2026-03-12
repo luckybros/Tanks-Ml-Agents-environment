@@ -1,3 +1,4 @@
+#if DISATTIVATO
 namespace Tanks.Complete
 {
     public class ShieldPowerUpOracle : PowerUpOracleBase
@@ -18,3 +19,4 @@ namespace Tanks.Complete
         }
     }
 }
+#endif

@@ -28,6 +28,7 @@ namespace Tanks.Complete
         public float m_ExplosionForce = 50f;              // The amount of force added to a tank at the centre of the explosion.
         [Tooltip("The radius of the explosion in Unity unit. Force decrease with distance to the center, and an tank further than this from the shell explosion won't be impacted by the explosion")]
         public float m_ExplosionRadius = 5f;                // The maximum distance away from the explosion tanks can be and are still affected.
+        public bool bugVersion = true;
 
         [HideInInspector]
         public TankInputUser m_InputUser;           // The Input User component for that tanks. Contains the Input Actions. 
@@ -58,6 +59,9 @@ namespace Tanks.Complete
 
         // added, not original
         public event Action<Vector2> ExplosionPositionNotification;
+        public event Action OnExplosionEnanched;
+
+        public bool HasProjectileInAir = false;
         
         private void OnEnable()
         {
@@ -257,6 +261,7 @@ namespace Tanks.Complete
         private void Fire ()
         {
             // Set the fired flag so only Fire is only called once.
+            HasProjectileInAir = true;
             m_Fired = true;
 
             // Create an instance of the shell and store a reference to it's rigidbody.
@@ -278,7 +283,23 @@ namespace Tanks.Complete
             // Increase the damage if extra damage PowerUp is active
             if (m_HasSpecialShell)
             {
+                // Notitfy to disable the power up
+                OnExplosionEnanched?.Invoke();
+
                 explosionData.m_MaxDamage *= m_SpecialShellMultiplier;
+
+                // BUG CRASH: A carica massima: (20-5)/(20-5) * 3 = 3.0 → FloorToInt = 3
+                // damageScales[3] → IndexOutOfRangeException!
+                // A carica parziale (indice 0, 1, 2) funziona normalmente
+                if (bugVersion) 
+                {
+                    float[] damageScales = { 1.0f, 1.0f, 1.0f };
+                    int chargeIndex = Mathf.FloorToInt(
+                        (m_CurrentLaunchForce - m_MinLaunchForce) / (m_MaxLaunchForce - m_MinLaunchForce) * damageScales.Length
+                    );
+                    Debug.Log($"bugVersion tankShooting:{chargeIndex}");
+                    explosionData.m_MaxDamage += damageScales[chargeIndex];
+                }
                 // Reset the default values after increasing the damage of the fired shell
                 m_HasSpecialShell = false;
                 m_SpecialShellMultiplier = 1f;
@@ -345,6 +366,7 @@ namespace Tanks.Complete
 
         private void SendExplosionPositionToAgent(Vector2 position)
         {
+            HasProjectileInAir = false;
             ExplosionPositionNotification?.Invoke(position);
         }
     }

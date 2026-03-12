@@ -5,6 +5,7 @@ using System.Collections;
 
 namespace Tanks.Complete
 {
+    /*
     public class Sabotatore : MonoBehaviour
     {
         OracleSideChannel sideChannel;
@@ -67,4 +68,5 @@ namespace Tanks.Complete
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
     }
+    */
 }

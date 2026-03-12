@@ -1,3 +1,4 @@
+#if DISATTIVATO
 namespace Tanks.Complete
 {
     public class ShootingBonusPowerUpOracle : PowerUpOracleBase
@@ -19,3 +20,4 @@ namespace Tanks.Complete
         }
     }
 }
+#endif
