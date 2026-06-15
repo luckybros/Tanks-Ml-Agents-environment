@@ -1,11 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.MLAgents;
+using System.IO;
 
 namespace Tanks.Complete
 {
     public class CoverageManager : MonoBehaviour
     {
+        
         public float cellSize = 5.0f;
         
         [Header("Tank References")]
@@ -34,25 +36,72 @@ namespace Tanks.Complete
         private Rigidbody tank2Rb;
         private PowerUpDetectorML tank2Detector;
 
-        private HashSet<TankState> visitedStates= new HashSet<TankState>();
+        private static HashSet<TankState> visitedStates= new HashSet<TankState>();
         //private HashSet<TankState> visitedStatesT2 = new HashSet<TankState>();
-        private HashSet<GlobalGameState> visitedGlobalStates = new HashSet<GlobalGameState>();
+        private static HashSet<GlobalGameState> visitedGlobalStates = new HashSet<GlobalGameState>();
 
         private bool isFirstFrame = true;
         private GlobalGameState lastState;
 
         private StatsRecorder statsRecorder;
+
+        private static readonly object fileLock = new object(); // Lucchetto per evitare collisioni tra le arene
+        private static string tankStatesPath;
+        private static string globalStatesPath;
+        private static bool isLoaded = false;
         
+        private void Awake()
+        {
+
+            //#if !UNITY_EDITOR
+            //Debug.unityLogger.logEnabled = false;
+            //#endif
+
+            InitializeTankComponents();
+            statsRecorder = Academy.Instance.StatsRecorder;
+
+            // Salviamo i file un livello sopra la cartella Assets, vicini alla cartella 'results' di mlagents
+            tankStatesPath = Path.Combine(Application.persistentDataPath, "./TankStatesLog.txt");
+            globalStatesPath = Path.Combine(Application.persistentDataPath, "./GlobalStatesLog.txt");
+
+            // Debug.Log($"Path: {tankStatesPath}");
+            // Il lock impedisce alle 4 arene di provare a caricare i file in simultanea
+            lock (fileLock) 
+            {
+                if (!isLoaded)
+                {
+                    LoadStatesFromDisk();
+                    isLoaded = true;
+                }
+            }
+        }
+
+        private void LoadStatesFromDisk()
+        {
+            if (File.Exists(tankStatesPath))
+            {
+                foreach (string line in File.ReadLines(tankStatesPath))
+                {
+                    if (!string.IsNullOrWhiteSpace(line)) visitedStates.Add(TankState.Parse(line));
+                }
+            }
+
+            if (File.Exists(globalStatesPath))
+            {
+                foreach (string line in File.ReadLines(globalStatesPath))
+                {
+                    if (!string.IsNullOrWhiteSpace(line)) visitedGlobalStates.Add(GlobalGameState.Parse(line));
+                }
+            }
+            
+            // Debug.Log($"[COVERAGE] Ripristinati {visitedStates.Count} stati singoli e {visitedGlobalStates.Count} stati globali dal disco.");
+        }
+
         public GlobalGameState GetCurrentState()
         {
             return lastState;
         }
         
-        private void Awake()
-        {
-            InitializeTankComponents();
-            statsRecorder = Academy.Instance.StatsRecorder;
-        }
 
         // Update is called once per frame
         void FixedUpdate()
@@ -73,9 +122,29 @@ namespace Tanks.Complete
 
             //Debug.Log($"[STATE] {lastState.ToCompactString()} | newT1={newT1} newT2={newT2} newGlobal={newGlobal}");
 
-            if (newT1) statsRecorder.Add("Coverage/UniqueStates", visitedStates.Count);
-            //if (newT2) statsRecorder.Add("Coverage/UniqueStates_T2", visitedStatesT2.Count);
+            if (newT1 || newT2 || newGlobal)
+            {
+                lock (fileLock)
+                {
+                    // AppendAllText apre il file, va all'ultima riga, scrive e lo chiude istantaneamente
+                    if (newT1) File.AppendAllText(tankStatesPath, lastState.t1.ToString() + "\n");
+                    if (newT2) File.AppendAllText(tankStatesPath, lastState.t2.ToString() + "\n");
+                    if (newGlobal) File.AppendAllText(globalStatesPath, lastState.ToCompactString() + "\n");
+                }
+            }
+
+            if (newT1 || newT2) statsRecorder.Add("Coverage/UniqueStates", visitedStates.Count);
+            // if (newT2) statsRecorder.Add("Coverage/UniqueStates", visitedStates.Count);
             if (newGlobal) statsRecorder.Add("Coverage/GlobalUniqueStates", visitedGlobalStates.Count);
+
+            if (Time.frameCount % 100 == 0)
+            {
+                int envSteps = Academy.Instance.StepCount;
+                int agentSteps = tank1.GetComponent<TankAgent>().StepCount + tank2.GetComponent<TankAgent>().StepCount;
+
+                //Debug.Log($"[Coverage]: {envSteps}");
+                //Debug.Log($"[Coverage Agent]: {agentSteps}");
+            }
         }
 
         private GlobalGameState CaptureGlobalGameState()

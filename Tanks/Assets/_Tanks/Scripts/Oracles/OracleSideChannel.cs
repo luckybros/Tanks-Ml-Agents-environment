@@ -8,6 +8,7 @@ namespace Tanks.Complete
 {
     public class OracleSideChannel : SideChannel
     {
+        public static event Action OnResetReceived;
         public OracleSideChannel()
         {
             ChannelId = new Guid("621f0a70-4f87-11ea-a6bf-784f4387d1f7");
@@ -16,6 +17,12 @@ namespace Tanks.Complete
         protected override void OnMessageReceived(IncomingMessage msg)
         {
             var receivedString = msg.ReadString();
+            
+            if (receivedString == "RESET")
+            {
+                Debug.Log("Comando di reset ricevuto da Python tramite SideChannel.");
+                OnResetReceived?.Invoke();
+            }
             Debug.Log("From Python : " + receivedString);
         }
 

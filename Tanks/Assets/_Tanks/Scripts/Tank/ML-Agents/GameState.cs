@@ -83,6 +83,27 @@ namespace Tanks.Complete
             this.hasProjectileInAir = hasProjectileInAir ? 1 : 0;
         }
 
+        public TankState(int x, int z, int vel, int angle, int health, int canShoot, int powerUp, int hasProjectileInAir)
+        {
+            this.x = x;
+            this.z = z;
+            this.vel = vel;
+            this.angle = angle;
+            this.health = health;
+            this.canShoot = canShoot;
+            this.powerUp = powerUp;
+            this.hasProjectileInAir = hasProjectileInAir;
+        }
+
+        public static TankState Parse(string s)
+        {
+            string[] p = s.Split('_');
+            return new TankState(
+                int.Parse(p[0]), int.Parse(p[1]), int.Parse(p[2]), int.Parse(p[3]),
+                int.Parse(p[4]), int.Parse(p[5]), int.Parse(p[6]), int.Parse(p[7])
+            );
+        }
+
         public bool Equals(TankState other)
         {
             return x == other.x &&
@@ -150,6 +171,12 @@ namespace Tanks.Complete
             //this.p2 = p2;
             //this.p3 = p3;
             //this.p4 = p4;
+        }
+
+        public static GlobalGameState Parse(string s)
+        {
+            string[] p = s.Split('|');
+            return new GlobalGameState(TankState.Parse(p[0]), TankState.Parse(p[1]));
         }
 
         public bool Equals(GlobalGameState other)

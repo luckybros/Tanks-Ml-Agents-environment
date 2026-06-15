@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace Tanks.Complete
 {
@@ -36,6 +37,9 @@ namespace Tanks.Complete
         [SerializeField] private float m_DamageMultiplier = 2f;
 
         private PowerUpSpawnerML m_Spawner;               // Reference to the spawner that instantiated this PowerUp
+        public bool bugShieldCanTakeAnotherPowerUp;
+
+        public static event Action<bool, PowerUpType, PowerUpType> OnPowerUpCollected;
 
         private void Update()
         {
@@ -51,9 +55,20 @@ namespace Tanks.Complete
                 // Reference to the PowerUpDetector component of the tank.
                 PowerUpDetectorML m_PowerUpDetector = other.gameObject.GetComponent<PowerUpDetectorML>();
 
+                bool hasActivePowerUp = m_PowerUpDetector.m_HasActivePowerUp;
+                PowerUpType activePowerUpBefore = m_PowerUpDetector.m_PowerUpType;
+                
                 // Checks that the tank has not picked up other power up
+                if (bugShieldCanTakeAnotherPowerUp)
+                {
+                    if (m_PowerUpDetector.m_PowerUpType == PowerUpML.PowerUpType.DamageReduction)
+                        m_PowerUpDetector.m_HasActivePowerUp = false;
+                }
+
                 if (!m_PowerUpDetector.m_HasActivePowerUp)
                 {
+                    OnPowerUpCollected?.Invoke(hasActivePowerUp, activePowerUpBefore, m_PowerUpType);
+
                     // The power up reduces is a shield
                     if (m_PowerUpType == PowerUpType.DamageReduction)
                         m_PowerUpDetector.PickUpShield(m_DamageReduction, m_DurationTime);

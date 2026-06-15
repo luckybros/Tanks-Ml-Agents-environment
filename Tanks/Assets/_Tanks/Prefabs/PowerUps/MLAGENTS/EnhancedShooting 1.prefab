@@ -134,3 +134,4 @@ MonoBehaviour:
   m_CooldownReduction: 0.5
   m_HealingAmount: 20
   m_DamageMultiplier: 2
+  bugShieldCanTakeAnotherPowerUp: 1

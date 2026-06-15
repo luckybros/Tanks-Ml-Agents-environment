@@ -23,7 +23,8 @@ namespace Tanks.Complete
 
             if (timer >= interval)
             {
-                SendToPython($"[ALIVE]");
+                int currentStep = Unity.MLAgents.Academy.Instance.StepCount;
+                SendToPython($"[ALIVE]|{currentStep}");
                 timer = 0f;
             }
         }

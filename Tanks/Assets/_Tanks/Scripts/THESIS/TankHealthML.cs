@@ -13,7 +13,8 @@ namespace Tanks.Complete
         public Color m_ZeroHealthColor = Color.red;
         public GameObject m_ExplosionPrefab;
         [HideInInspector] public bool m_HasShield;
-        public bool bugVersion;
+        public bool BugVersionHangHitWithShield;
+        public bool BugVersionLogicalHealingBeyondBaseHealth;
         
         private AudioSource m_ExplosionAudio;
         private ParticleSystem m_ExplosionParticles;
@@ -23,7 +24,7 @@ namespace Tanks.Complete
         private bool m_IsInvincible;
 
         public event Action<TankAgent> DeathNotification;
-        public event Action<TankAgent> DamageNotification;
+        public event Action<TankAgent, float> DamageNotification;
 
         /// <summary>
         /// Invocato DOPO ogni cambio di vita (danno, heal, reset).
@@ -37,6 +38,14 @@ namespace Tanks.Complete
             m_ExplosionAudio = m_ExplosionParticles.GetComponent<AudioSource> ();
             m_ExplosionParticles.gameObject.SetActive (false);
             m_Slider.maxValue = m_StartingHealth;
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                TakeDamage(49f, null);
+            }
         }
 
         private void OnDestroy()
@@ -60,12 +69,12 @@ namespace Tanks.Complete
                 // BUG HANG: "ricalcola finché il danno non è validato con lo scudo"
                 // m_HasShield è true quando lo scudo è attivo
                 // m_CurrentHealth > 0 perché lo scudo riduce il danno (non lo azzera)
-                /*
-                if (bugVersion)
-                {
-                    while (m_HasShield && m_CurrentHealth > 0) {}
-                }
-                */
+                
+                //if (BugVersionHangHitWithShield)
+                //{
+                //    while (true) {}
+                //}
+                
                 // >>> NOTIFICA GLI ORACOLI <<<
                 OnHealthChanged?.Invoke();
 
@@ -75,23 +84,33 @@ namespace Tanks.Complete
                 }
                 else
                 {
-                    DamageNotification?.Invoke(attacker);
+                    DamageNotification?.Invoke(attacker, amount);
                 }
             }
         }
 
         public void IncreaseHealth(float amount)
         {
-            if (bugVersion)
+            if (BugVersionLogicalHealingBeyondBaseHealth)
             {
                 // LOGIC BUG: >= invece di <=
-                if (m_CurrentHealth + amount >= m_StartingHealth)
+                if (m_CurrentHealth <= 65f && m_CurrentHealth >= 50)
                 {
-                    m_CurrentHealth += amount;
+                    if (m_CurrentHealth + amount >= m_StartingHealth)
+                    {
+                        m_CurrentHealth += amount;
+                    }
                 }
-                else
+                else 
                 {
-                    m_CurrentHealth = m_StartingHealth;
+                    if (m_CurrentHealth + amount <= m_StartingHealth)
+                    {
+                        m_CurrentHealth += amount;
+                    }
+                    else
+                    {
+                        m_CurrentHealth = m_StartingHealth;
+                    }
                 }
             }
             else

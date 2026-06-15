@@ -28,13 +28,24 @@ namespace Tanks.Complete
         {
             if (type == LogType.Error || type == LogType.Exception)
             {
+                string cleanLog = logString.Replace("\n", " ").Replace("\r", " ");
+                string cleanStack = stackTrace.Replace("\n", " ").Replace("\r", " ");
+
+                if (cleanStack.Length > 150)
+                {
+                    cleanStack = cleanStack.Substring(0, 150) + "...";
+                }
+
+                string safeMessage = $"{cleanLog} - STACK: {cleanStack}";
+
+                Debug.Log("AAA eccezioneee");
                 if (type == LogType.Error)
                 {
-                    ReportBug("error", logString + " : " + stackTrace);
+                    ReportBug("error", safeMessage);
                 }
                 else if (type == LogType.Exception)
                 {
-                    ReportBug("exception", logString + " : " + stackTrace);
+                    ReportBug("exception", safeMessage);
                 }
             }
         }
