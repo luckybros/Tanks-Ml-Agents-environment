@@ -1,5 +1,68 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6613242232363765048
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5251045000791951891}
+  - component: {fileID: 4527917599305853637}
+  m_Layer: 9
+  m_Name: ForwardRays
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5251045000791951891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6613242232363765048}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1.73}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1521431059817413998}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4527917599305853637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6613242232363765048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Sensors.RayPerceptionSensorComponent3D
+  m_SensorName: RayPerceptionSensor
+  m_DetectableTags:
+  - Tank
+  - PowerUp
+  - Wall
+  m_RaysPerDirection: 10
+  m_MaxRayDegrees: 90
+  m_SphereCastRadius: 0.5
+  m_RayLength: 30
+  m_RayLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  m_ObservationStacks: 3
+  m_AlternatingRayOrder: 1
+  m_UseBatchedRaycasts: 1
+  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
+  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
+  m_StartVerticalOffset: 0.5
+  m_EndVerticalOffset: 0.5
 --- !u!1001 &1521431059817788316
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8,6 +71,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3493270063330898990, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: DecisionPeriod
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -1658965900906468418, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: m_BehaviorType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1658965900906468418, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: -1658965900906468418, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: 'm_BrainParameters.VectorActionSize.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -1658965900906468418, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: 'm_BrainParameters.m_ActionSpec.BranchSizes.Array.data[0]'
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 173472, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
       propertyPath: m_Name
       value: Demo_Tank_Base_ML - Medium Variant
@@ -64,12 +147,37 @@ PrefabInstance:
       propertyPath: m_AnchorMax.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4180782983336064889, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 5229624721485345423, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: m_RayLength
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 5229624721485345423, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
       propertyPath: m_RaysPerDirection
       value: 4
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 5229624721485345423, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: 'm_DetectableTags.Array.data[2]'
+      value: Wall
+      objectReference: {fileID: 0}
+    - target: {fileID: 6444775916240607648, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      propertyPath: m_RayLength
+      value: 30
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 6444775916240607648, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 446194, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+      insertIndex: 6
+      addedObject: {fileID: 5251045000791951891}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+--- !u!4 &1521431059817413998 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 446194, guid: 4ee3109b1be434b2b982d18b6c7f0caa, type: 3}
+  m_PrefabInstance: {fileID: 1521431059817788316}
+  m_PrefabAsset: {fileID: 0}

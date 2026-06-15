@@ -49,6 +49,8 @@ namespace Tanks.Complete
 
         private Vector3 m_RequestedDirection;       // In Direct Control mode, store the direction the user *wants* to go toward
         
+        public float speedBugMultiplier = 1f;
+        public bool BugVersionStuckZeroSpeed;
         private void Awake ()
         {
             m_Rigidbody = GetComponent<Rigidbody> ();
@@ -248,7 +250,16 @@ namespace Tanks.Complete
             }
             
             // Create a vector in the direction the tank is facing with a magnitude based on the input, speed and the time between frames.
-            Vector3 movement = transform.forward * speedInput * m_Speed;
+            // [STUCK BUG] the game has a speed multiplier that can be modified, some objects set that to 0
+            Vector3 movement;
+            if (BugVersionStuckZeroSpeed)
+            {
+                movement = transform.forward * speedInput * m_Speed * speedBugMultiplier;
+            }
+            else
+            {   
+                movement = transform.forward * speedInput * m_Speed;
+            }
 
             // Apply this movement to the rigidbody's position.
             m_Rigidbody.linearVelocity = movement + m_ExplosionForceValue;

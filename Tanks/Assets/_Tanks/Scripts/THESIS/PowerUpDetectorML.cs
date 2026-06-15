@@ -9,7 +9,8 @@ namespace Tanks.Complete
         // Variable that indicates if the tank has a PowerUp right now
         public bool m_HasActivePowerUp = false;
         public PowerUpML.PowerUpType m_PowerUpType = PowerUpML.PowerUpType.None;
-        public bool bugVersion;
+        public bool BugVersionHangShieldAtFullHealth;
+        public bool BugVersionLogicalHealingWithPowerUp;
         // References to the tank's components
         private TankShootingML m_TankShooting;
         private TankMovementML m_TankMovement;
@@ -110,15 +111,19 @@ namespace Tanks.Complete
             m_TankHealth.ToggleShield(shieldAmount);
 
             // HANG BUG: scudo a vita piena, hang
-            /*
-            if (bugVersion)
+            if (BugVersionHangShieldAtFullHealth)
             {
-                if (m_TankHealth.m_CurrentHealth >= m_TankHealth.m_StartingHealth)
+                if (m_TankHealth.m_CurrentHealth >= 50 && m_TankHealth.m_CurrentHealth <= 90)
                 {
-                    while (true) {}
+                    OracleManager.Instance.ReportGameLogicBug(
+                        "HANG ORACLE",
+                        "hang_shield",
+                        "Not recieved ping for timeout seconds"
+                    );
+                    //while (true) {}
                 }
             }
-            */
+            
             // >>> NOTIFICA GLI ORACOLI <<<
             // OnPowerUpApplied?.Invoke(PowerUpML.PowerUpType.DamageReduction);
 
@@ -136,7 +141,21 @@ namespace Tanks.Complete
             float healthBefore = m_TankHealth.m_CurrentHealth;
             OnPowerUpApplied?.Invoke();
 
-            m_TankHealth.IncreaseHealth(healAmount);
+            if (BugVersionLogicalHealingWithPowerUp)
+            {
+                if (m_PowerUpType != PowerUpML.PowerUpType.None)
+                {
+                    m_TankHealth.IncreaseHealth(0);
+                }
+                else
+                {
+                    m_TankHealth.IncreaseHealth(healAmount);
+                }
+            }
+            else
+            {
+                m_TankHealth.IncreaseHealth(healAmount);
+            }
             m_PowerUpHUD.SetActivePowerUp(PowerUp.PowerUpType.Healing, 1.0f);
 
             // >>> NOTIFICA GLI ORACOLI <<<
@@ -168,7 +187,6 @@ namespace Tanks.Complete
         }
 
         // Equips the tank with a special shell that increases damage
-        
         public void PowerUpSpecialShell(float damageMultiplier)
         {
             m_HasActivePowerUp = true;

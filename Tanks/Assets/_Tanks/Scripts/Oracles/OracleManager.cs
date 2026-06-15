@@ -44,7 +44,9 @@ namespace Tanks.Complete
 
             SideChannelManager.RegisterSideChannel(sideChannel);
 
-            sideChannel.SendStringToPython("[START]");
+            int currentStep = Unity.MLAgents.Academy.Instance.StepCount;
+
+            sideChannel.SendStringToPython($"[START]|{currentStep}");
         }
 
         private void OnDestroy()
@@ -77,7 +79,8 @@ namespace Tanks.Complete
         /// </summary>
         public void ReportGameLogicBug(string oracleName, string bugType, string message)
         {
-            string fullMessage = $"[GAME_BUG]|{oracleName}|{bugType}|{message}";
+            int currentStep = Unity.MLAgents.Academy.Instance.StepCount;
+            string fullMessage = $"[GAME_BUG]|{oracleName}|{bugType}|{message}|{currentStep}";
             SendToPython(fullMessage);
         }
     }

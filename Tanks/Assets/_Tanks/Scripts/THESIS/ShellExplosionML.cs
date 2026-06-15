@@ -9,8 +9,9 @@ namespace Tanks.Complete
         public ParticleSystem m_ExplosionParticles;         // Reference to the particles that will play on explosion.
         public AudioSource m_ExplosionAudio;                // Reference to the audio that will play on explosion.
         [HideInInspector] public float m_MaxLifeTime = 2f;  // The time in seconds before the shell is removed.
-        public bool bugVersionOne = false;
-        public bool bugVersionTwo;
+        public bool BugVersionCrashDivisionByZero;
+        public bool BugVersionDamageNotApplied;
+        public bool BugVersionProjectileExplosionCrash;
 
         // All those are hidden in inspector as they will actually come from the TankShooting scripts
         [HideInInspector] public float m_MaxDamage = 100f;                    // The amount of damage done if the explosion is centred on a tank.
@@ -31,6 +32,15 @@ namespace Tanks.Complete
 
         private void OnTriggerEnter (Collider other)
         {
+            if (other.CompareTag("Projectile"))
+            {
+                if (BugVersionProjectileExplosionCrash)
+                {
+                    throw new Exception("Projectile Explosion Crash!");
+                    return;
+                }
+            }
+            
 			// Collect all the colliders in a sphere from the shell's current position to a radius of the explosion radius.
             Collider[] colliders = Physics.OverlapSphere (transform.position, m_ExplosionRadius, m_TankMask);
 
@@ -57,13 +67,13 @@ namespace Tanks.Complete
                 float healthBeforeDamage = targetHealth.m_CurrentHealth;
 
                 // Calculate the amount of damage the target should take based on it's distance from the shell.
-                float damage = CalculateDamage (targetRigidbody.position);
+                float damage = CalculateDamage (targetRigidbody.position, targetHealth, m_ShootingAgent);
 
 
-                if (bugVersionOne)
+                if (BugVersionDamageNotApplied)
                 {
                     Debug.Log($"Bug Damage One:");
-                    if (targetHealth.m_CurrentHealth > targetHealth.m_StartingHealth * 0.3f)
+                    if (targetHealth.m_CurrentHealth >= 20f)
                     {
                         targetHealth.TakeDamage (damage, m_ShootingAgent);
                     }
@@ -101,7 +111,7 @@ namespace Tanks.Complete
             ExplosionPositionNotification?.Invoke(new Vector2(transform.position.x, transform.position.z));;
         }
 
-        private float CalculateDamage (Vector3 targetPosition)
+        private float CalculateDamage (Vector3 targetPosition, TankHealthML targetHealth, TankAgent attacker)
         {
             // Create a vector from the shell to the target.
             Vector3 explosionToTarget = targetPosition - transform.position;
@@ -115,16 +125,24 @@ namespace Tanks.Complete
             // Calculate damage as this proportion of the maximum possible damage.
             float damage = m_MaxDamage;
 
-
-            if (bugVersionTwo)
+            if (BugVersionCrashDivisionByZero)
             {
-                Vector3 distanceBetweenTanks = targetPosition - m_ShootingAgent.transform.position;
-                float distanceBetweenTanksMagnitude = distanceBetweenTanks.magnitude;
-                Debug.Log($"explosion Distante: {distanceBetweenTanksMagnitude}!");
-                int distInt = Mathf.FloorToInt(distanceBetweenTanksMagnitude);
-                Debug.Log($"distInt: {distInt}");
+                bool isVictimLowHealth = targetHealth.m_CurrentHealth <= (10f);
+
+                Debug.Log($"isVictimLowHealth: {isVictimLowHealth}, targetHealth: {targetHealth.m_CurrentHealth}!");
+
+                if (isVictimLowHealth && attacker.gameObject != targetHealth.gameObject)
+                {
+                    Vector3 distanceBetweenTanks = targetPosition - m_ShootingAgent.transform.position;
+                    Debug.Log($"explosion Distante: {distanceBetweenTanks.magnitude}!");
+                    float distanceBetweenTanksMagnitude = distanceBetweenTanks.magnitude / 15f;
+                    Debug.Log($"explosion Distante: {distanceBetweenTanksMagnitude}!");
+                    int distInt = Mathf.FloorToInt(distanceBetweenTanksMagnitude);
+                    Debug.Log($"distInt: {distInt}");
+                    int bonusDamage = Mathf.FloorToInt(m_MaxDamage) / distInt;
+
+                }
                 //BUG CRASH: bonus danno ravvicinato — FloorToInt(0.8) = 0 → divisione per zero
-                int bonusDamage = Mathf.FloorToInt(m_MaxDamage) / distInt;
                 // damage = damage * m_ExplosionRadius / distInt;
             }
                 

@@ -31,6 +31,8 @@ namespace Tanks.Complete
             }
             errorTimestamps[bugType] = Time.time;
 
+            // int currentStep = Unity.MLAgents.Academy.Instance.StepCount;
+
             Debug.LogWarning($"[{OracleName}] {message}");
 
             if (OracleManager.Instance != null)

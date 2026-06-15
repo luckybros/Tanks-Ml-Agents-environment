@@ -5,6 +5,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using Random = UnityEngine.Random;
+using System.IO;
 
 namespace Tanks.Complete
 {
@@ -21,7 +22,6 @@ namespace Tanks.Complete
         private TankHealthML tankHealth;
         private Rigidbody rb;
         private PowerUpDetectorML powerUpDetector;
-
         private TankHealthML otherTankHealth;
 
         private Vector3 startPos;
@@ -33,6 +33,9 @@ namespace Tanks.Complete
         [SerializeField] private float maxSpeed = 12f;
         [SerializeField] private float maxTurnSpeed = 12f;
 
+        public float explorationReward = 0.1f;
+        public float cellSize = 5.0f;
+
         [SerializeField] private EpisodeManager episodeManager;
         public bool useVectorObs;
 
@@ -40,10 +43,51 @@ namespace Tanks.Complete
 
         private float maxDistance = 9f;
 
+        public bool randomMode;
+
+        private static HashSet<Vector2Int> visitedTiles = new HashSet<Vector2Int>();
+        private static bool isExplorationLoaded = false;
+        private static readonly object expLock = new object();
+        private static string expPath;
+
         public override void Initialize()
         {
             GetComponents();
             SaveStartPositions();
+
+            expPath = Path.Combine(Application.persistentDataPath, "./ExploredTiles.txt");
+
+            lock (expLock)
+            {
+                if (!isExplorationLoaded)
+                {
+                    LoadExplorationData();
+                    isExplorationLoaded = true;
+                }
+            }
+        }
+
+        private void LoadExplorationData()
+        {
+            if (File.Exists(expPath))
+            {
+                foreach (string line in File.ReadLines(expPath))
+                {
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        string[] parts = line.Split(',');
+                        if (parts.Length == 2 && int.TryParse(parts[0], out int x) && int.TryParse(parts[1], out int z))
+                        {
+                            visitedTiles.Add(new Vector2Int(x, z));
+                        }
+                    }
+                }
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            TrackExploration();
         }
 
         public override void CollectObservations(VectorSensor sensor)
@@ -62,25 +106,46 @@ namespace Tanks.Complete
         {
             return new float[]
             {   
-                //transform.localPosition.x / areaSize, 
-                //transform.localPosition.z / areaSize,
+                transform.localPosition.x / areaSize, 
+                transform.localPosition.z / areaSize,
                 //otherAgent.transform.localPosition.x / areaSize,
                 //otherAgent.transform.localPosition.z / areaSize,
                 //Mathf.Clamp(transform.InverseTransformDirection(rb.linearVelocity).z / tankMovement.m_Speed, -1, 1),
                 //(transform.localRotation.eulerAngles.y / 360f) * 2f - 1f,
                 tankShooting.m_CanShoot ? 1.0f : 0.0f,
                 tankHealth.m_CurrentHealth / tankHealth.m_StartingHealth,
-                //otherTankHealth.m_CurrentHealth / otherTankHealth.m_StartingHealth,
+                otherTankHealth.m_CurrentHealth / otherTankHealth.m_StartingHealth,
                 //tankShooting.m_ShotCooldownTimer
             };
         }
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
-            int moveAction = actionBuffers.DiscreteActions[0];
-            int turnAction = actionBuffers.DiscreteActions[1];
-            int shootAction = actionBuffers.DiscreteActions[2];
+            int moveAction;
+            int turnAction;
+            int shootAction;
 
+            if (!randomMode)
+            {
+                moveAction = actionBuffers.DiscreteActions[0];
+                turnAction = actionBuffers.DiscreteActions[1];
+                shootAction = actionBuffers.DiscreteActions[2];
+            }
+            else
+            {
+                if (tankId == 0)
+                {
+                    moveAction = Input.GetKey(KeyCode.W) ? 1 : (Input.GetKey(KeyCode.S) ? 2 : 0);
+                    turnAction = Input.GetKey(KeyCode.D) ? 1 : (Input.GetKey(KeyCode.A) ? 2 : 0);
+                    shootAction =  Input.GetKey(KeyCode.Z) ? 1 : 0;
+                }
+                else
+                {
+                    moveAction = Input.GetKey(KeyCode.UpArrow) ? 1 : (Input.GetKey(KeyCode.DownArrow) ? 2 : 0);
+                    turnAction = Input.GetKey(KeyCode.LeftArrow) ? 1 : (Input.GetKey(KeyCode.RightArrow) ? 2 : 0);
+                    shootAction =  Input.GetKey(KeyCode.Space) ? 1 : 0;
+                }
+            }
             //float currentReward = GetCumulativeReward();
             //if (lastState == null)
             //{
@@ -140,7 +205,7 @@ namespace Tanks.Complete
                 break;
             }
 
-            AddReward(-0.0001f);
+            AddReward(-0.00005f);
 
             //float[] newState = GetCurrentStateArray();
             //float stepReward = GetCumulativeReward() - currentReward;
@@ -152,7 +217,7 @@ namespace Tanks.Complete
 
         public override void OnEpisodeBegin()
         {
-            ResetTank();
+            // ResetTank();
         }
 
         public override void Heuristic(in ActionBuffers actionsOut)
@@ -204,15 +269,18 @@ namespace Tanks.Complete
             startRot = spawnPoint.rotation;
         }
 
-        private void ResetTank()
+        public void ResetTank(Vector3 position, Quaternion rotation)
         {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
             tankMovement.m_MovementInputValue = 0;
             tankMovement.m_TurnInputValue = 0;
 
             rb.isKinematic = true;
 
-            transform.position = startPos;
-            transform.rotation = startRot;
+            transform.position = position;
+            transform.rotation = rotation;
             
             rb.isKinematic = false;
 
@@ -222,16 +290,17 @@ namespace Tanks.Complete
             rb.Sleep();
             rb.WakeUp();
 
+            tankMovement.speedBugMultiplier = 1f;
             tankHealth.ResetHealth();
         }
 
-        private void OnDamageTaken(TankAgent attacker)
+        private void OnDamageTaken(TankAgent attacker, float damageAmount)
         {
             // if he doesnt hurt himself
             if (attacker != this)
             {
                 Debug.Log("Altro agente colpito!");
-                attacker.AddReward(0.1f);
+                attacker.AddReward(Mathf.Clamp01(damageAmount / 100f) * 0.1f);
             }
             else
             {
@@ -242,11 +311,11 @@ namespace Tanks.Complete
         private void OnDeath(TankAgent attacker)
         {
             Debug.Log($"On Death:");
-            AddReward(-1f);
+            AddReward(-0.5f);
             if (attacker != this)
             {
                 Debug.Log("Killed other agent!");
-                attacker.AddReward(1f);
+                attacker.AddReward(0.5f);
             }
             else 
             {
@@ -268,17 +337,45 @@ namespace Tanks.Complete
 
             if (distance <= maxDistance)
             {
-                float reward = (1 - distance / maxDistance) * 0.1f;
+                float reward = (1 - distance / maxDistance) * 0.01f;
                 AddReward(reward); 
             }
         }
 
         private void OnPowerUpApplied()
         {
-            AddReward(0.05f);
+            Debug.Log("Power up applied!");
+            AddReward(0.2f);
+        }
+
+        private void TrackExploration()
+        {
+            Vector2Int currentCell = new Vector2Int(
+                Mathf.FloorToInt(transform.localPosition.x / cellSize),
+                Mathf.FloorToInt(transform.localPosition.z / cellSize)
+            );
+
+            bool isNewTile = false;
+
+            lock (expLock)
+            {
+                if (visitedTiles.Add(currentCell))
+                {
+                    File.AppendAllText(expPath, $"{currentCell.x},{currentCell.y}\n");
+                    isNewTile = true;
+                }
+            }
+
+            if (isNewTile)
+            {
+                Debug.Log("auauauauauauau new tile");
+                AddReward(0.1f);
+            }
         }
     }
 }
+
+
 
 //activate ml-agents
 //mlagents-learn config/tank_trainer_config.yaml --run-id=tankRun --train
