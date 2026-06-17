@@ -49,7 +49,6 @@ sysinfo.txt
 *.unitypackage
 *.app
 *.exe
-*.x86_64
 *.x86
 
 # --- ASSET SPECIFICI DA IGNORARE ---
