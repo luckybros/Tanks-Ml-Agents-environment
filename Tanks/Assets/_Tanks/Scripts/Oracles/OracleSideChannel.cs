@@ -3,27 +3,39 @@ using Unity.MLAgents;
 using Unity.MLAgents.SideChannels;
 using System.Text;
 using System;
+using System.Security.Cryptography;
 
 namespace Tanks.Complete
 {
     public class OracleSideChannel : SideChannel
     {
+        public static event Action<int> OnStuckResetReceived;
         public static event Action OnResetReceived;
+
         public OracleSideChannel()
         {
-            ChannelId = new Guid("621f0a70-4f87-11ea-a6bf-784f4387d1f7");
+            string runID = GetRunID();
+            ChannelId = new Guid(runID);
         }
 
         protected override void OnMessageReceived(IncomingMessage msg)
         {
             var receivedString = msg.ReadString();
             
-            if (receivedString == "RESET")
+            if (receivedString.StartsWith("RESET"))
             {
-                Debug.Log("Comando di reset ricevuto da Python tramite SideChannel.");
-                OnResetReceived?.Invoke();
+                int envId = 0;
+                var parts = receivedString.Split(':');
+                if (parts.Length > 1)
+                {
+                    int.TryParse(parts[1], out envId);
+                    OnStuckResetReceived?.Invoke(envId);
+                }
+                else
+                {
+                    OnResetReceived?.Invoke();
+                }
             }
-            Debug.Log("From Python : " + receivedString);
         }
 
         public void SendStringToPython(string msg)
@@ -35,6 +47,15 @@ namespace Tanks.Complete
                 msgOut.WriteString(stringToSend);
                 QueueMessageToSend(msgOut);
             }
+        }
+
+        private string GetRunID()
+        {
+            string oralceId = System.Environment.GetEnvironmentVariable("ORACLE_HASH");
+            if (!string.IsNullOrEmpty(oralceId))
+                return oralceId;
+
+            return "0";
         }
     }
 }

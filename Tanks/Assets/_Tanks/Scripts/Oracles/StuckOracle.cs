@@ -80,11 +80,14 @@ namespace Tanks.Complete
 
                 if (history.Count >= historySize && isTryingToMove && IsStuck(currentPos, history))
                 {
+                    int envId = tanks[i].parent.GetComponentInChildren<EpisodeManager>().EnvID;
+
                     Vector2Int discretePos = DiscretizePosition(currentPos);
 
                     Debug.Log($"Stuck!");
                     ReportBug(
                         $"stuck_{discretePos.x}_{discretePos.y}", // <-- Aggiunta la posizione discreta al tipo di bug
+                        $"environment_{envId} " +
                         $"Tank {i} stuck: the position doesn't change. " +
                         $"Exact position: {currentPos}. " +
                         $"Discrete Cell: {discretePos}" // <-- Inserita qui nel report

@@ -60,9 +60,13 @@ namespace Tanks.Complete
             InitializeTankComponents();
             statsRecorder = Academy.Instance.StatsRecorder;
 
+            string runID = GetRunID();
+            string runFolder = Path.Combine(Application.persistentDataPath, "CoverageLogs", runID);
+            Directory.CreateDirectory(runFolder);
+
             // Salviamo i file un livello sopra la cartella Assets, vicini alla cartella 'results' di mlagents
-            tankStatesPath = Path.Combine(Application.persistentDataPath, "./TankStatesLog.txt");
-            globalStatesPath = Path.Combine(Application.persistentDataPath, "./GlobalStatesLog.txt");
+            tankStatesPath = Path.Combine(runFolder, "./TankStatesLog.txt");
+            globalStatesPath = Path.Combine(runFolder, "./GlobalStatesLog.txt");
 
             // Debug.Log($"Path: {tankStatesPath}");
             // Il lock impedisce alle 4 arene di provare a caricare i file in simultanea
@@ -210,6 +214,15 @@ namespace Tanks.Complete
             tank2Health = tank2.GetComponent<TankHealthML>();
             tank2Rb = tank2.GetComponent<Rigidbody>();
             tank2Detector = tank2.GetComponent<PowerUpDetectorML>();
+        }
+
+        private string GetRunID()
+        {
+            string oralceId = System.Environment.GetEnvironmentVariable("ORACLE_ID");
+            if (!string.IsNullOrEmpty(oralceId))
+                return oralceId;
+
+            return "0";
         }
     }
 }

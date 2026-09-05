@@ -6,6 +6,9 @@ namespace Tanks.Complete
 {
     public class EpisodeManager : MonoBehaviour
     {
+        [SerializeField] private int envId;
+        public int EnvID { get => envId; }
+
         // l'episode manager è per env
         public TankAgent[] agents;
         public Transform[] spawnPoints;
@@ -16,6 +19,7 @@ namespace Tanks.Complete
         void OnEnable()
         {
             Academy.Instance.OnEnvironmentReset += EndEpisode;
+            OracleSideChannel.OnStuckResetReceived += OnResetReceived;
             OracleSideChannel.OnResetReceived += EndEpisode;
         }
 
@@ -25,6 +29,7 @@ namespace Tanks.Complete
             {
                 Academy.Instance.OnEnvironmentReset -= EndEpisode;
             }
+            OracleSideChannel.OnStuckResetReceived -= OnResetReceived;
             OracleSideChannel.OnResetReceived -= EndEpisode;
         }
 
@@ -32,13 +37,11 @@ namespace Tanks.Complete
         {
             SpawnAgents();
         }
-        
-        void Update()
+
+        private void OnResetReceived(int envId)
         {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
+            if (envId == this.envId)
                 EndEpisode();
-            }
         }
         
         public void EndEpisode()
