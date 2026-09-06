@@ -55,7 +55,11 @@ namespace Tanks.Complete
             GetComponents();
             SaveStartPositions();
 
-            expPath = Path.Combine(Application.persistentDataPath, "./ExploredTiles.txt");
+            string runID = GetRunID();
+            string runFolder = Path.Combine(Application.persistentDataPath, "CoverageLogs", runID);
+            Directory.CreateDirectory(runFolder);
+
+            expPath = Path.Combine(runFolder, "./ExploredTiles.txt");
 
             lock (expLock)
             {
@@ -371,6 +375,15 @@ namespace Tanks.Complete
                 Debug.Log("auauauauauauau new tile");
                 AddReward(0.1f);
             }
+        }
+
+        private string GetRunID()
+        {
+            string oralceId = System.Environment.GetEnvironmentVariable("ORACLE_ID");
+            if (!string.IsNullOrEmpty(oralceId))
+                return oralceId;
+
+            return "0";
         }
     }
 }
